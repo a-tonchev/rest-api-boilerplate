@@ -1,4 +1,4 @@
-# KOA Rest API + mongodb driver + user authentication
+# KOA Rest API Boilerplate with mongodb driver
 Boilerplate for Rest API based on node js, KOA and mongo driver with JSON Schema validation (which is native for mongo)
 
 ## Installation

@@ -1,31 +1,40 @@
-import { Validator } from 'jsonschema';
+import Ajv from 'ajv';
+import AjvBson from 'ajv-bsontype';
+import AjvErrors from 'ajv-errors';
+
 import { createErrorResponse } from '../responseHandler/responses';
 import CustomErrors from '../responseHandler/CustomErrors';
+
+const ajv = new Ajv({ allErrors: true, jsonPointers: true });
+AjvBson(ajv);
+AjvErrors(ajv);
 
 export default class ValidationServices {
   static prepareForParamsValidation(schemaFields) {
     const paramsFields = {};
     Object.keys(schemaFields).forEach(function (item) {
-      const { bsonType, ...rest } = schemaFields[item];
-      paramsFields[item] = { type: bsonType, ...rest };
+      const { ...rest } = schemaFields[item];
+      paramsFields[item] = { ...rest, errorMessage: item };
     });
     return paramsFields;
   }
 
   static validateSchema(ctx, data, schema) {
-    const v = new Validator();
-    const validation = v.validate(data, schema);
-    if (!ctx) return validation;
-    if (!validation.valid) {
-      const errors = validation.errors.map(e => {
-        let { argument } = e;
-        if (e.property.includes('.')) {
-          argument = e.property.split('.').slice(1).join('.');
+    const validate = ajv.compile(schema);
+    const valid = validate(data);
+    if (!ctx) return valid;
+    if (!valid) {
+      const errors = validate.errors && validate.errors.length ? validate.errors.map(e => {
+        const { params, message } = e;
+        const { missingProperty } = params;
+        if (missingProperty) {
+          return missingProperty;
         }
-        return argument;
-      });
+        return message;
+      }) : [];
+
       return createErrorResponse(ctx, CustomErrors.BAD_REQUEST, { errors });
     }
-    return validation;
+    return valid;
   }
 }

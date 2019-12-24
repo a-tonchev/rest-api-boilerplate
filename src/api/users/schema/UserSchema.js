@@ -3,7 +3,7 @@ import CommonSchemaFields from '../../../modules/validation/CommonSchemaFields';
 
 const {
   encryptedPassword,
-  emailAddress,
+  email,
   clientNumber,
   name,
   website,
@@ -36,7 +36,7 @@ const UserSchema = {
       required: ['address'],
       additionalProperties: false,
       properties: {
-        address: emailAddress,
+        address: email,
         verified: basicBoolean,
       },
     },

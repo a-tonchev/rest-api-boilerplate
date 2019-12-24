@@ -7,11 +7,12 @@
   "private": true,
   "dependencies": {
     "ajv": "^6.10.2",
+    "ajv-bsontype": "^1.0.7",
+    "ajv-errors": "^1.0.1",
     "bcrypt": "^3.0.7",
     "eslint-config-prettier": "^6.7.0",
     "esm": "^3.2.25",
     "generic-pool": "^3.7.1",
-    "jsonschema": "^1.2.5",
     "koa": "^2.11.0",
     "koa-bodyparser": "^4.2.1",
     "koa-router": "^7.4.0",

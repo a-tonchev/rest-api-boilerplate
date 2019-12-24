@@ -7,14 +7,11 @@ const UserSchemaFields = {
     bsonType: 'string',
     type: 'string',
     pattern: '^.{8,}$',
-    description: 'password',
-    title: 'password',
-    message: 'password',
   },
   website: {
     bsonType: 'string',
   },
-  emailAddress: {
+  email: {
     bsonType: 'string',
     pattern: '^\\S+@\\S+$',
   },

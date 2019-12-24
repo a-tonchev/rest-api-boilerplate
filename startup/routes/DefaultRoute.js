@@ -6,7 +6,7 @@ const DefaultRoute = createBasicRoutes({
     {
       method: 'all',
       path: '/',
-      handler: ctx => ctx.body = 'Hello world',
+      handler: ctx => ctx.body = 'Hello API!',
     },
   ],
 });

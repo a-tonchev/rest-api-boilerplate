@@ -1,23 +1,28 @@
 import { ObjectId } from 'mongodb';
-import Users from '../Users';
 import StringHelper from '../../../modules/helpers/StringHelper';
 
-export default class UserServices {
-  static async add(newUser) {
-    return Users().insertOne(newUser);
+class UserServices {
+  usersDb = null;
+
+  constructor(userDb) {
+    this.usersDb = userDb;
   }
 
-  static async getById(_id, params = UserServices.publicParams) {
+  async add(newUser) {
+    return this.usersDb.insertOne(newUser);
+  }
+
+  async getById(_id, params = this.publicParams) {
     if (!ObjectId.isValid(_id)) return null;
-    return Users().findOne({ _id: ObjectId(_id) }, params);
+    return this.usersDb.findOne({ _id: ObjectId(_id) }, params);
   }
 
-  static async getByEmail(email, params = UserServices.publicParams) {
-    return Users().findOne({ 'email.address': email }, params);
+  async getByEmail(email, params = this.publicParams) {
+    return this.usersDb.findOne({ 'email.address': email }, params);
   }
 
-  static async getByEmailOrClientNumber(emailOrClientNumber, params = UserServices.publicParams) {
-    return Users().findOne({
+  async getByEmailOrClientNumber(emailOrClientNumber, params = this.publicParams) {
+    return this.usersDb.findOne({
       $or: [
         { 'email.address': emailOrClientNumber },
         { clientNumber: emailOrClientNumber },
@@ -25,19 +30,19 @@ export default class UserServices {
     }, params);
   }
 
-  static getIdAsString(user) {
+  getIdAsString(user) {
     return user._id.toString();
   }
 
-  static async getByClientNumber(clientNumber, params = UserServices.publicParams) {
-    return Users().findOne({ clientNumber }, params);
+  async getByClientNumber(clientNumber, params = this.publicParams) {
+    return this.usersDb.findOne({ clientNumber }, params);
   }
 
-  static async getAll(params = UserServices.publicParams) {
-    return Users().find({}, params).toArray();
+  async getAll(params = this.publicParams) {
+    return this.usersDb.find({}, params).toArray();
   }
 
-  static getPasswordBcrypt(user) {
+  getPasswordBcrypt(user) {
     if (user
       && user.services
       && user.services.password
@@ -46,13 +51,13 @@ export default class UserServices {
     return null;
   }
 
-  static async checkPassword(user, password) {
+  async checkPassword(user, password) {
     const bcryptHash = this.getPasswordBcrypt(user);
     if (bcryptHash) return StringHelper.compareBcrypt(password, bcryptHash);
     return false;
   }
 
-  static publicParams = {
+  publicParams = {
     projection: {
       _id: 1,
       email: 1,
@@ -62,3 +67,5 @@ export default class UserServices {
     },
   }
 }
+
+export default UserServices;

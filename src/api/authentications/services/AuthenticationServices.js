@@ -1,33 +1,37 @@
 import { ObjectId } from 'mongodb';
-import Authentications from '../Authentications';
-import UserServices from '../../users/services/UserServices';
 import DateHelper from '../../../modules/helpers/DateHelper';
 
 const activeSessionDays = 2;
 const deleteSessionsAfter = 30;
 
-export default class AuthenticationServices {
-  static async add(newAuthentication) {
-    await Authentications().insertOne(newAuthentication);
+class AuthenticationServices {
+  authDb = null;
+
+  constructor(authDb) {
+    this.authDb = authDb;
+  }
+
+  async add(newAuthentication) {
+    await this.authDb.insertOne(newAuthentication);
     return newAuthentication._id;
   }
 
-  static async getById(_id) {
+  async getById(_id) {
     if (!ObjectId.isValid(_id)) return null;
-    return Authentications().findOne({ _id: ObjectId(_id) });
+    return this.authDb.findOne({ _id: ObjectId(_id) });
   }
 
-  static async getAll() {
-    return Authentications().find({}).toArray();
+  async getAll() {
+    return this.authDb.find({}).toArray();
   }
 
-  static async removeOld() {
-    return Authentications().deleteMany({
+  async removeOld() {
+    return this.authDb.deleteMany({
       lastActivity: { $lt: DateHelper.getBefore({ days: deleteSessionsAfter }) },
     });
   }
 
-  static prepareAuthenticationSession(userId, ctx) {
+  prepareAuthenticationSession(userId, ctx) {
     const { userAgent, request } = ctx;
     const { ip } = request;
     const { _agent } = userAgent;
@@ -42,7 +46,7 @@ export default class AuthenticationServices {
     };
   }
 
-  static async checkAuthenticated(token) {
+  async checkAuthenticated(token) {
     const existingAuthentication = await this.getById(token);
     if (
       existingAuthentication
@@ -52,20 +56,22 @@ export default class AuthenticationServices {
     return false;
   }
 
-  static async updateLastActivity(_id) {
-    return Authentications().updateOne({ _id }, {
+  async updateLastActivity(_id) {
+    return this.authDb.updateOne({ _id }, {
       $set: {
         lastActivity: DateHelper.getNow(),
       },
     });
   }
 
-  static async getUserByToken(token) {
+  async getUserByToken(ctx, token) {
     const session = await this.checkAuthenticated(token);
     if (session) {
       await this.updateLastActivity(session._id);
-      return UserServices.getById(session.userId, {});
+      return ctx.services.users.getById(session.userId, {});
     }
     return null;
   }
 }
+
+export default AuthenticationServices;

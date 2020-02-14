@@ -1,4 +1,3 @@
-import UserServices from '../services/UserServices';
 import {
   createSuccessResponse,
   createErrorResponse,
@@ -9,32 +8,31 @@ import UserSchema from '../schema/UserSchema';
 import AuthenticationSchema from '../../authentications/schema/AuthenticationSchema';
 import OnBoardingServices from '../services/OnBoardingServices';
 import ValidationServices from '../../../modules/validation/ValidationServices';
-import AuthenticationServices from '../../authentications/services/AuthenticationServices';
 
 export default class UserController {
   static async getAll(ctx) {
-    const users = await UserServices.getAll();
+    const users = await ctx.services.users.getAll();
     return createSuccessResponse(ctx, {
       users,
     });
   }
 
   static async getById(ctx) {
-    const user = await UserServices.getById(ctx.params.id);
+    const user = await ctx.services.users.getById(ctx.params.id);
     return createSuccessResponse(ctx, user);
   }
 
   static async getOwnData(ctx) {
-    const user = await UserServices.getById(ctx.state.user._id);
+    const user = await ctx.services.users.getById(ctx.state.user._id);
     return createSuccessResponse(ctx, user);
   }
 
   static async signUp(ctx) {
     const { email, password } = ctx.request.body;
-    const preparedUser = await OnBoardingServices.prepareUser({ email, password });
+    const preparedUser = await OnBoardingServices.prepareUser({ email, password, ctx });
     ValidationServices.validateSchema(ctx, preparedUser, UserSchema);
     try {
-      await UserServices.add(preparedUser);
+      await ctx.services.users.add(preparedUser);
       return createSuccessResponse(ctx);
     } catch (err) {
       if (err.code === 11000) {
@@ -49,15 +47,15 @@ export default class UserController {
 
   static async login(ctx) {
     const { email, password } = ctx.request.body;
-    const user = await UserServices.getByEmailOrClientNumber(email, {});
-    const checkPassword = await UserServices.checkPassword(user, password);
+    const user = await ctx.services.users.getByEmailOrClientNumber(email, {});
+    const checkPassword = await ctx.services.users.checkPassword(user, password);
     createValidateError(user && checkPassword, ctx, CustomErrors.USER_WRONG_LOGIN_CREDENTIALS);
-    const preparedAuthSession = AuthenticationServices.prepareAuthenticationSession(
-      UserServices.getIdAsString(user), ctx,
+    const preparedAuthSession = ctx.services.authentications.prepareAuthenticationSession(
+      ctx.services.users.getIdAsString(user), ctx,
     );
     ValidationServices.validateSchema(ctx, preparedAuthSession, AuthenticationSchema);
     try {
-      const token = await AuthenticationServices.add(preparedAuthSession);
+      const token = await ctx.services.authentications.add(preparedAuthSession);
       return createSuccessResponse(ctx, { token });
     } catch (err) {
       return createErrorResponse(ctx, CustomErrors.BAD_REQUEST);

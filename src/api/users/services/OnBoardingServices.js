@@ -1,17 +1,16 @@
 import dateHelper from '../../../modules/helpers/DateHelper';
 import stringHelper from '../../../modules/helpers/StringHelper';
-import UserServices from './UserServices';
 
 export default class OnBoardingServices {
-  static async makeUniqueClientNumber() {
+  static async makeUniqueClientNumber(ctx) {
     const tempCN = stringHelper.generateToken(6, false);
-    const user = await UserServices.getByClientNumber(tempCN);
+    const user = await ctx.services.users.getByClientNumber(tempCN);
     if (!user) return tempCN;
-    return this.makeUniqueClientNumber();
+    return this.makeUniqueClientNumber(ctx);
   }
 
   static async prepareUser({
-    email, password, language, profile,
+    email, password, language, profile, ctx,
   }) {
     return {
       email: {
@@ -32,7 +31,7 @@ export default class OnBoardingServices {
         },
       },
       roles: [],
-      clientNumber: await this.makeUniqueClientNumber(),
+      clientNumber: await this.makeUniqueClientNumber(ctx),
       profile: profile || {},
       settings: {
         language: language || 'de',

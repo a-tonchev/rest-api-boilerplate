@@ -6,7 +6,9 @@
   "extends": ["airbnb-base"],
   "globals": {
     "Atomics": "readonly",
-    "SharedArrayBuffer": "readonly"
+    "SharedArrayBuffer": "readonly",
+    "services": "writable",
+    "global": "writable"
   },
   "parser": "babel-eslint",
   "parserOptions": {

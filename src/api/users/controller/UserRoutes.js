@@ -1,7 +1,6 @@
 import createBasicRoutes from '../../../modules/routing/RouteCreator';
 import UserController from './UserController';
 import UserValidations from '../services/UserValidations';
-import UserAuthentications from '../services/UserAuthentications';
 
 const UserRoutes = createBasicRoutes(
   {
@@ -21,7 +20,7 @@ const UserRoutes = createBasicRoutes(
       {
         method: 'get',
         path: '/ownData',
-        authentication: UserAuthentications.checkUserAuthenticated,
+        authentication: true,
         handler: UserController.getOwnData,
       },
       {

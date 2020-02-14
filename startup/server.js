@@ -1,11 +1,12 @@
 import Koa from 'koa';
 import bodyParser from 'koa-bodyparser';
 import { userAgent } from 'koa-useragent';
-
 import mongoPool from '../src/modules/db/mongoPool';
 import routes from './routes/routes';
 import settings from '../../settings';
 import UserAuthentications from '../src/api/users/services/UserAuthentications';
+import setupDatabase from '../src/modules/db/setupDatabase';
+import setupServices from '../src/modules/services/setupServices';
 
 const app = new Koa();
 app.use(async (ctx, next) => {
@@ -36,7 +37,11 @@ app.use(mongoPool({
   dbName: settings.dbName,
 }));
 
+app.use(setupDatabase);
+app.use(setupServices);
+
 app.use(UserAuthentications.setupAuthentication);
+
 
 app.use(bodyParser());
 

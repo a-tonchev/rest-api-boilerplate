@@ -1,18 +1,7 @@
-import {
-  createValidateError,
-} from '../../../modules/responseHandler/responses';
-import CustomErrors from '../../../modules/responseHandler/CustomErrors';
-import AuthenticationServices from '../../authentications/services/AuthenticationServices';
-
 export default class UserAuthentications {
-  static async checkUserAuthenticated(ctx) {
+  static async isUserAuthenticated(ctx) {
     const { user } = ctx.state;
-    createValidateError(
-      user,
-      ctx,
-      CustomErrors.USER_NOT_AUTHENTICATED,
-    );
-    return true;
+    return !!user;
   }
 
   static async setupAuthentication(ctx, next) {
@@ -27,7 +16,7 @@ export default class UserAuthentications {
       }
     }
     if (token) {
-      user = await AuthenticationServices.getUserByToken(token);
+      user = await ctx.services.authentications.getUserByToken(ctx, token);
       if (user) {
         ctx.state.user = user;
       }

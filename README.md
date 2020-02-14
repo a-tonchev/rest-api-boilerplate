@@ -1,4 +1,4 @@
-# koa-rest-mongo
+# KOA Rest API Boilerplate with mongodb driver
 Boilerplate for Rest API based on node js, KOA and mongo driver with JSON Schema validation (which is native for mongo)
 
 ## Installation
@@ -100,6 +100,6 @@ In mongoose models are coupled to the database, and using/validating a Model mus
 
 Also as of Mongo 3.6 you can use draft-4 of the JSON Schema spec directly in Mongo. 
 
-In the project we use the package 'jsonschema' to validate the parameters before we give them try into the database.
+In the project we use the package 'ajv' to validate the parameters before we give them try into the database.
 
 The project is using also custom db-connection pool based on "generic-pool", so that we don't need to create connection on each request

@@ -39,6 +39,9 @@ yarn start
 /users/login - Login with username and password
 /users/ownData - get user data for registered user
 ```
+### The boilerplate provides all services in the ctx object:
+
+ctx.services
 
 ### Each route request have following steps (managed by the own route-creator):
 
@@ -76,7 +79,7 @@ const UserRoutes = createBasicRoutes(
       {
         method: 'get',
         path: '/ownData',
-        authentication: AuthenticateUser(),
+        authentication: true, //if true, user should be logged in.
         authorization: AuthorizeUser(),
         validation: ValidateUserRequest(),
         handler: HandleRequestedData(),

@@ -1,16 +1,11 @@
-import {
-  createValidateError,
-} from '../../../modules/responseHandler/responses';
 import UserSchemaFields from '../schema/UserSchemaFields';
-import ValidationServices from '../../../modules/validation/ValidationServices';
-import CustomErrors from '../../../modules/responseHandler/CustomErrors';
 import CommonSchemaFields from '../../../modules/validation/CommonSchemaFields';
 
 export default class UserValidations {
   static async validateSignUp(ctx) {
     const { email, password } = ctx.request.body;
-    const preparedSchema = ValidationServices.prepareForParamsValidation(UserSchemaFields);
-    const valid = ValidationServices.validateSchema(ctx, { email, password }, {
+    const preparedSchema = ctx.helpers.validations.prepareForParamsValidation(UserSchemaFields);
+    const valid = ctx.helpers.validations.validateSchema(ctx, { email, password }, {
       bsonType: 'object',
       required: ['email', 'password'],
       properties: {
@@ -18,6 +13,7 @@ export default class UserValidations {
         password: preparedSchema.password,
       },
     });
+    const { createValidateError, CustomErrors } = ctx.helpers.responses;
     createValidateError(
       !await ctx.services.users.getByEmail(email),
       ctx,
@@ -28,8 +24,8 @@ export default class UserValidations {
 
   static async validateLogin(ctx) {
     const { email, password } = ctx.request.body;
-    const validations = ValidationServices.prepareForParamsValidation(CommonSchemaFields);
-    return ValidationServices.validateSchema(ctx, { email, password }, {
+    const validations = ctx.helpers.validations.prepareForParamsValidation(CommonSchemaFields);
+    return ctx.helpers.validations.validateSchema(ctx, { email, password }, {
       bsonType: 'object',
       required: ['email', 'password'],
       properties: {

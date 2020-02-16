@@ -2,11 +2,10 @@ import Koa from 'koa';
 import bodyParser from 'koa-bodyparser';
 import { userAgent } from 'koa-useragent';
 import mongoPool from '../src/modules/db/mongoPool';
-import routes from './routes/routes';
+import routers from './routes/routes';
 import settings from '../../settings';
 import UserAuthentications from '../src/api/users/services/UserAuthentications';
-import setupDatabase from '../src/modules/db/setupDatabase';
-import setupServices from '../src/modules/services/setupServices';
+import servicePool from '../src/modules/services/servicePool';
 
 const app = new Koa();
 app.use(async (ctx, next) => {
@@ -37,15 +36,15 @@ app.use(mongoPool({
   dbName: settings.dbName,
 }));
 
-app.use(setupDatabase);
-app.use(setupServices);
+app.use(servicePool);
 
 app.use(UserAuthentications.setupAuthentication);
 
 
 app.use(bodyParser());
 
-routes.forEach(route => app.use(route.routes()));
+app.use(routers.routes());
+app.use(routers.allowedMethods());
 
 const port = process.env.PORT || 5001;
 app.listen(port, () => {

@@ -4,10 +4,9 @@ import CustomErrors from '../responseHandler/CustomErrors';
 import { createValidateError } from '../responseHandler/responses';
 import UserAuthentications from '../../api/users/services/UserAuthentications';
 
-const createBasicRoutes = ({ prefix = '/', routeData = [] }) => {
-  const router = new Router({
-    prefix,
-  });
+const createBasicRoutes = ({ prefix, routeData = [] }) => {
+  const prefixParams = prefix ? { prefix } : {};
+  const router = new Router(prefixParams);
 
   routeData.forEach(
     routeElement => {

@@ -32,7 +32,7 @@ class AuthenticationServices {
   }
 
   prepareAuthenticationSession(userId, ctx) {
-    const { userAgent, request } = ctx;
+    const { userAgent, request, helpers } = ctx;
     const { ip } = request;
     const { _agent } = userAgent;
     return {

@@ -1,9 +1,6 @@
-import { getDb } from '../../modules/db/mongoPool';
 import AuthenticationEnums from './enums/AuthenticationEnums';
+import { getAppDb } from '../../modules/db/mongoPool';
 
-const Authentications = () => {
-  const db = getDb();
-  if (db) return db.collection(AuthenticationEnums.COLLECTION_NAME);
-};
+const Authentications = () => getAppDb(AuthenticationEnums.COLLECTION_NAME);
 
 export default Authentications;

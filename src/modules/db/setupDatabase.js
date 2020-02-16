@@ -1,16 +1,10 @@
-import Users from '../../api/users/Users';
-import Authentications from '../../api/authentications/Authentications';
+import getCollection from './getCollection';
+import UserEnums from '../../api/users/enums/UserEnums';
+import AuthenticationEnums from '../../api/authentications/enums/AuthenticationEnums';
 
-const setupDatabase = async (ctx, next) => {
-  ctx.databases = {
-    users: Users(),
-    authentications: Authentications(),
-  };
-  try {
-    await next();
-  } finally {
-    ctx.services = null;
-  }
-};
+const setupDatabase = db => ({
+  users: getCollection(UserEnums.COLLECTION_NAME, db),
+  authentications: getCollection(AuthenticationEnums.COLLECTION_NAME, db),
+});
 
 export default setupDatabase;

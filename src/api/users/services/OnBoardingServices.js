@@ -1,9 +1,6 @@
-import dateHelper from '../../../modules/helpers/DateHelper';
-import stringHelper from '../../../modules/helpers/StringHelper';
-
 export default class OnBoardingServices {
   static async makeUniqueClientNumber(ctx) {
-    const tempCN = stringHelper.generateToken(6, false);
+    const tempCN = ctx.helpers.string.generateToken(6, false);
     const user = await ctx.services.users.getByClientNumber(tempCN);
     if (!user) return tempCN;
     return this.makeUniqueClientNumber(ctx);
@@ -19,13 +16,13 @@ export default class OnBoardingServices {
       },
       services: {
         password: {
-          bcrypt: await stringHelper.generateBcrypt(password),
+          bcrypt: await ctx.helpers.string.generateBcrypt(password),
         },
         email: {
           verificationTokens: [
             {
-              createdAt: dateHelper.getNow(),
-              token: stringHelper.generateToken(32),
+              createdAt: ctx.helpers.date.getNow(),
+              token: ctx.helpers.string.generateToken(32),
             },
           ],
         },
@@ -36,8 +33,8 @@ export default class OnBoardingServices {
       settings: {
         language: language || 'de',
       },
-      updatedAt: dateHelper.getNow(),
-      createdAt: dateHelper.getNow(),
+      updatedAt: ctx.helpers.date.getNow(),
+      createdAt: ctx.helpers.date.getNow(),
     };
   }
 }

@@ -1,5 +1,5 @@
-import setupUserCollection from '../../api/users/services/setupUserCollection';
-import setupAuthenticationCollection from '../../api/authentications/services/setupAuthenticationCollection';
+import setupUserCollection from '../../lib/users/services/setupUserCollection';
+import setupAuthenticationCollection from '../../lib/authentications/services/setupAuthenticationCollection';
 
 const createCollection = async (db, name, schema) => {
   const existingCollection = await db.listCollections({ name }).next();

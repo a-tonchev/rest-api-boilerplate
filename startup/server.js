@@ -4,7 +4,7 @@ import { userAgent } from 'koa-useragent';
 import mongoPool from '../src/modules/db/mongoPool';
 import routers from './routes/routes';
 import settings from '../../settings';
-import UserAuthentications from '../src/api/users/services/UserAuthentications';
+import UserAuthentications from '../src/lib/users/services/UserAuthentications';
 import servicePool from '../src/modules/services/servicePool';
 
 const app = new Koa();

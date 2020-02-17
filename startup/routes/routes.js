@@ -1,5 +1,5 @@
 import Router from 'koa-router';
-import UserRoutes from '../../src/api/users/controller/UserRoutes';
+import UserRoutes from '../../src/lib/users/controller/UserRoutes';
 import DefaultRoute from './DefaultRoute';
 
 const apiRouter = new Router();

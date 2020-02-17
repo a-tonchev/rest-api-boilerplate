@@ -1,6 +1,6 @@
 import getCollection from './getCollection';
-import UserEnums from '../../api/users/enums/UserEnums';
-import AuthenticationEnums from '../../api/authentications/enums/AuthenticationEnums';
+import UserEnums from '../../lib/users/enums/UserEnums';
+import AuthenticationEnums from '../../lib/authentications/enums/AuthenticationEnums';
 
 const setupDatabase = db => ({
   users: getCollection(UserEnums.COLLECTION_NAME, db),

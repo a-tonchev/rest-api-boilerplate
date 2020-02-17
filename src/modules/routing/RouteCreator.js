@@ -2,7 +2,7 @@ import Router from 'koa-router';
 import CustomErrors from '../responseHandler/CustomErrors';
 
 import { createValidateError } from '../responseHandler/responses';
-import UserAuthentications from '../../api/users/services/UserAuthentications';
+import UserAuthentications from '../../lib/users/services/UserAuthentications';
 
 const createBasicRoutes = ({ prefix, routeData = [] }) => {
   const prefixParams = prefix ? { prefix } : {};

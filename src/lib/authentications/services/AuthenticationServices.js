@@ -68,7 +68,7 @@ class AuthenticationServices {
     const session = await this.checkAuthenticated(token);
     if (session) {
       await this.updateLastActivity(session._id);
-      return ctx.services.users.getById(session.userId, {});
+      return ctx.libServices.users.getById(session.userId, {});
     }
     return null;
   }

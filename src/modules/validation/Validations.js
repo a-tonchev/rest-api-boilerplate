@@ -29,8 +29,8 @@ export default class Validations {
         return message;
       }) : [];
 
-      return ctx.helpers.responses.createErrorResponse(
-        ctx, ctx.helpers.responses.CustomErrors.BAD_REQUEST,
+      return ctx.modServices.responses.createErrorResponse(
+        ctx, ctx.modServices.responses.CustomErrors.BAD_REQUEST,
         { errors },
       );
     }

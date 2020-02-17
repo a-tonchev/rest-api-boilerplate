@@ -1,26 +1,26 @@
 import setupServices from './setupServices';
 
-let appServices;
-let appHelpers;
+let libServices;
+let modServices;
 
 const servicePool = async (ctx, next) => {
   const setup = setupServices(ctx);
-  ctx.services = setup.services;
-  ctx.helpers = setup.helpers;
-  appServices = ctx.services;
-  appHelpers = ctx.helpers;
+  ctx.libServices = setup.services;
+  ctx.modServices = setup.helpers;
+  libServices = ctx.libServices;
+  modServices = ctx.modServices;
   try {
     await next();
   } finally {
-    appServices = null;
-    appHelpers = null;
-    ctx.services = null;
-    ctx.helpers = null;
+    libServices = null;
+    modServices = null;
+    ctx.libServices = null;
+    ctx.modServices = null;
   }
 };
 
-const getServices = (serviceName) => (serviceName ? appServices[serviceName] : appServices);
-const getHelpers = (helperName) => (helperName ? appHelpers[helperName] : appHelpers);
+const getLibServices = (serviceName) => (serviceName ? libServices[serviceName] : libServices);
+const getModServices = (serviceName) => (serviceName ? modServices[serviceName] : modServices);
 
-export { getServices, getHelpers };
+export { getLibServices, getModServices };
 export default servicePool;

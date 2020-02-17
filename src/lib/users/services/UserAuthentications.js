@@ -16,7 +16,7 @@ export default class UserAuthentications {
       }
     }
     if (token) {
-      user = await ctx.services.authentications.getUserByToken(ctx, token);
+      user = await ctx.libServices.authentications.getUserByToken(ctx, token);
       if (user) {
         ctx.state.user = user;
       }

@@ -27,8 +27,8 @@ yarn start
 ### The boilerplate provides following structure:
 
 ```
-/api - the directory with all services that serve the database
-/modules - the directory with additional helpers (that are not in immediate contact with the database)
+/lib - the directory with all services that serve the database
+/modules - the directory with additional helpers (modules, or services that serve additional purposes)
 /startup - files that serve to start the server + basic routes
 ```
 
@@ -41,7 +41,10 @@ yarn start
 ```
 ### The boilerplate provides all services in the ctx object:
 
-ctx.services
+ctx.db - the mongodb
+ctx.appDb - the mongodb collections, prepared for mongo queries (e.g. ctx.appDb.users or ctx.appDb.products etc...)
+ctx.libServices - All services/library that serve the collections
+ctx.modServices - All services/modules that serve different purposes
 
 ### Each route request have following steps (managed by the own route-creator):
 

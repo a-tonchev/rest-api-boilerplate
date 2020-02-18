@@ -8,6 +8,7 @@ const StatusCodes = {
   UNSUPPORTED_MEDIA_TYPE: 415,
   UNPROCESSABLE: 422,
   SERVER_ERROR: 500,
+  SERVER_TIMEOUT: 504,
 };
 
 export default StatusCodes;

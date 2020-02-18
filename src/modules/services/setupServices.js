@@ -12,13 +12,13 @@ const setupServices = ctx => {
   const { appDb } = ctx;
   const { users, authentications } = appDb;
   // Setup services
-  const services = {
+  const libServices = {
     users: new UserServices(users),
     authentications: new AuthenticationServices(authentications),
     onBoarding: OnBoardingServices,
   };
   // Setup helpers
-  const helpers = {
+  const modServices = {
     validations: Validations,
     responses: {
       createSuccessResponse,
@@ -30,7 +30,7 @@ const setupServices = ctx => {
     date,
   };
   return {
-    services, helpers,
+    libServices, modServices,
   };
 };
 

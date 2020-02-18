@@ -7,7 +7,7 @@
   "globals": {
     "Atomics": "readonly",
     "SharedArrayBuffer": "readonly",
-    "services": "writable",
+    "libServices": "writable",
     "global": "writable"
   },
   "parser": "babel-eslint",

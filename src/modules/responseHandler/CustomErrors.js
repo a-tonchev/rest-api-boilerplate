@@ -31,6 +31,11 @@ const CustomErrors = {
     errorCode: 'USER_WRONG_LOGIN_CREDENTIALS',
     message: 'User email or password wrong!',
   },
+  SERVER_TIMEOUT: {
+    statusCode: StatusCodes.SERVER_TIMEOUT,
+    errorCode: 'SERVER_TIMEOUT',
+    message: 'The server experience timeout, please try again later!',
+  },
 };
 
 export default CustomErrors;

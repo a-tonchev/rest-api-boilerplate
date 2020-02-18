@@ -5,8 +5,8 @@ let modServices;
 
 const servicePool = async (ctx, next) => {
   const setup = setupServices(ctx);
-  ctx.libServices = setup.services;
-  ctx.modServices = setup.helpers;
+  ctx.libServices = setup.libServices;
+  ctx.modServices = setup.modServices;
   libServices = ctx.libServices;
   modServices = ctx.modServices;
   try {

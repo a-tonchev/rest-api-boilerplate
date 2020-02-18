@@ -2,11 +2,13 @@ import { MongoClient } from 'mongodb';
 import genericPool from 'generic-pool';
 import setupCollections from './setupCollections';
 import setupDatabase from './setupDatabase';
+import { createValidateError } from '../responseHandler/responses';
+import CustomErrors from '../responseHandler/CustomErrors';
 
 let pDB;
 let appDb;
 
-function mongoPool(connOptions, confOptions = {}) {
+const mongoPool = (connOptions, confOptions = {}) => {
   const mongoUrl = connOptions.uri;
   const mongoDB = connOptions.dbName;
   const genPool = genericPool.createPool({
@@ -14,10 +16,10 @@ function mongoPool(connOptions, confOptions = {}) {
       useNewUrlParser: true,
       useUnifiedTopology: true,
       ...confOptions,
-    })
-      .then(client => client)
+    }).then(client => client)
       .catch(err => {
-        throw err;
+        console.log(err);
+        return null;
       }),
     destroy: client => client.close(),
   }, connOptions);
@@ -32,6 +34,13 @@ function mongoPool(connOptions, confOptions = {}) {
 
   return async (ctx, next) => {
     ctx.mongo = await genPool.acquire();
+
+    createValidateError(
+      ctx.mongo,
+      ctx,
+      CustomErrors.SERVER_TIMEOUT,
+    );
+
     ctx.db = ctx.mongo.db(mongoDB);
     pDB = ctx.db;
     ctx.appDb = setupDatabase(ctx.db);
@@ -45,7 +54,7 @@ function mongoPool(connOptions, confOptions = {}) {
       await release(ctx.mongo);
     }
   };
-}
+};
 
 const getDb = () => pDB;
 const getAppDb = colName => (colName ? appDb[colName] : appDb);

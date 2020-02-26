@@ -1,7 +1,7 @@
 export default class OnBoardingServices {
   static async makeUniqueClientNumber(ctx) {
-    const tempCN = ctx.modServices.string.generateToken(6, false);
-    const user = await ctx.libServices.users.getByClientNumber(tempCN);
+    const tempCN = ctx.modS.string.generateToken(6, false);
+    const user = await ctx.libS.users.getByClientNumber(tempCN);
     if (!user) return tempCN;
     return this.makeUniqueClientNumber(ctx);
   }
@@ -16,13 +16,13 @@ export default class OnBoardingServices {
       },
       services: {
         password: {
-          bcrypt: await ctx.modServices.string.generateBcrypt(password),
+          bcrypt: await ctx.modS.string.generateBcrypt(password),
         },
         email: {
           verificationTokens: [
             {
-              createdAt: ctx.modServices.date.getNow(),
-              token: ctx.modServices.string.generateToken(32),
+              createdAt: ctx.modS.date.getNow(),
+              token: ctx.modS.string.generateToken(32),
             },
           ],
         },
@@ -33,8 +33,8 @@ export default class OnBoardingServices {
       settings: {
         language: language || 'de',
       },
-      updatedAt: ctx.modServices.date.getNow(),
-      createdAt: ctx.modServices.date.getNow(),
+      updatedAt: ctx.modS.date.getNow(),
+      createdAt: ctx.modS.date.getNow(),
     };
   }
 }

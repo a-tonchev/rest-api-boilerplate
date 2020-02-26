@@ -7,31 +7,28 @@ import CustomErrors from '../responseHandler/CustomErrors';
 import string from '../helpers/StringHelper';
 import date from '../helpers/DateHelper';
 
-// Init all app services:
-const setupServices = ctx => {
+// Init lib services to context:
+const setupLibs = ctx => {
   const { appDb } = ctx;
   const { users, authentications } = appDb;
-  // Setup services
-  const libServices = {
+  return {
     users: new UserServices(users),
     authentications: new AuthenticationServices(authentications),
     onBoarding: OnBoardingServices,
   };
-  // Setup helpers
-  const modServices = {
-    validations: Validations,
-    responses: {
-      createSuccessResponse,
-      createErrorResponse,
-      createValidateError,
-      CustomErrors,
-    },
-    string,
-    date,
-  };
-  return {
-    libServices, modServices,
-  };
 };
 
-export default setupServices;
+// Init mod services to context:
+const setupMods = () => ({
+  validations: Validations,
+  responses: {
+    createSuccessResponse,
+    createErrorResponse,
+    createValidateError,
+    CustomErrors,
+  },
+  string,
+  date,
+});
+export { setupLibs, setupMods };
+export default setupLibs;

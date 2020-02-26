@@ -1,26 +1,36 @@
-import setupServices from './setupServices';
+import { setupLibs, setupMods } from './setupServices';
 
-let libServices;
 let modServices;
+let libServices;
 
-const servicePool = async (ctx, next) => {
-  const setup = setupServices(ctx);
-  ctx.libServices = setup.libServices;
-  ctx.modServices = setup.modServices;
-  libServices = ctx.libServices;
-  modServices = ctx.modServices;
-  try {
-    await next();
-  } finally {
-    libServices = null;
-    modServices = null;
-    ctx.libServices = null;
-    ctx.modServices = null;
+class servicePool {
+  static async setupModServices(ctx, next) {
+    ctx.modS = setupMods();
+    modServices = ctx.modS;
+
+    try {
+      await next();
+    } finally {
+      modServices = null;
+      ctx.modS = null;
+    }
   }
-};
 
-const getLibServices = (serviceName) => (serviceName ? libServices[serviceName] : libServices);
-const getModServices = (serviceName) => (serviceName ? modServices[serviceName] : modServices);
+  static async setupLibServices(ctx, next) {
+    ctx.libS = setupLibs(ctx);
 
-export { getLibServices, getModServices };
+    libServices = ctx.libS;
+    try {
+      await next();
+    } finally {
+      libServices = null;
+      ctx.libS = null;
+    }
+  }
+}
+
+const getModS = (serviceName) => (serviceName ? modServices[serviceName] : modServices);
+const getLibS = (serviceName) => (serviceName ? libServices[serviceName] : libServices);
+
+export { getModS, getLibS };
 export default servicePool;

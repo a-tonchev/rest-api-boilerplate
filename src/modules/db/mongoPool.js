@@ -2,8 +2,6 @@ import { MongoClient } from 'mongodb';
 import genericPool from 'generic-pool';
 import setupCollections from './setupCollections';
 import setupDatabase from './setupDatabase';
-import { createValidateError } from '../responseHandler/responses';
-import CustomErrors from '../responseHandler/CustomErrors';
 
 let pDB;
 let appDb;
@@ -35,10 +33,10 @@ const mongoPool = (connOptions, confOptions = {}) => {
   return async (ctx, next) => {
     ctx.mongo = await genPool.acquire();
 
-    createValidateError(
+    ctx.modS.responses.createValidateError(
       ctx.mongo,
       ctx,
-      CustomErrors.SERVER_TIMEOUT,
+      ctx.modS.responses.CustomErrors.SERVER_TIMEOUT,
     );
 
     ctx.db = ctx.mongo.db(mongoDB);

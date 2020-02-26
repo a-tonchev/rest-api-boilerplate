@@ -4,8 +4,8 @@ import CommonSchemaFields from '../../../modules/validation/CommonSchemaFields';
 export default class UserValidations {
   static async validateSignUp(ctx) {
     const { email, password } = ctx.request.body;
-    const preparedSchema = ctx.modServices.validations.prepareForParamsValidation(UserSchemaFields);
-    const valid = ctx.modServices.validations.validateSchema(ctx, { email, password }, {
+    const preparedSchema = ctx.modS.validations.prepareForParamsValidation(UserSchemaFields);
+    const valid = ctx.modS.validations.validateSchema(ctx, { email, password }, {
       bsonType: 'object',
       required: ['email', 'password'],
       properties: {
@@ -13,9 +13,9 @@ export default class UserValidations {
         password: preparedSchema.password,
       },
     });
-    const { createValidateError, CustomErrors } = ctx.modServices.responses;
+    const { createValidateError, CustomErrors } = ctx.modS.responses;
     createValidateError(
-      !await ctx.libServices.users.getByEmail(email),
+      !await ctx.libS.users.getByEmail(email),
       ctx,
       CustomErrors.USER_ALREADY_EXISTS,
     );
@@ -24,8 +24,8 @@ export default class UserValidations {
 
   static async validateLogin(ctx) {
     const { email, password } = ctx.request.body;
-    const validations = ctx.modServices.validations.prepareForParamsValidation(CommonSchemaFields);
-    return ctx.modServices.validations.validateSchema(ctx, { email, password }, {
+    const validations = ctx.modS.validations.prepareForParamsValidation(CommonSchemaFields);
+    return ctx.modS.validations.validateSchema(ctx, { email, password }, {
       bsonType: 'object',
       required: ['email', 'password'],
       properties: {

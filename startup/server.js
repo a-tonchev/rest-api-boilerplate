@@ -29,6 +29,8 @@ app.on('error', (err, ctx) => {
   console.log(err);
 });
 
+app.use(servicePool.setupModServices);
+
 app.use(userAgent);
 
 app.use(mongoPool({
@@ -36,7 +38,7 @@ app.use(mongoPool({
   dbName: settings.dbName,
 }));
 
-app.use(servicePool);
+app.use(servicePool.setupLibServices);
 
 app.use(UserAuthentications.setupAuthentication);
 

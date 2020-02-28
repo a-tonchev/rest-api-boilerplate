@@ -9,8 +9,8 @@ import date from '../helpers/DateHelper';
 
 // Init lib services to context:
 const setupLibs = ctx => {
-  const { appDb } = ctx;
-  const { users, authentications } = appDb;
+  const { db } = ctx;
+  const { users, authentications } = db;
   return {
     users: new UserServices(users),
     authentications: new AuthenticationServices(authentications),

@@ -3,20 +3,20 @@ import genericPool from 'generic-pool';
 import setupCollections from './setupCollections';
 import setupDatabase from './setupDatabase';
 
-let pDB;
-let appDb;
+let mongoDb;
+let db;
 
 const mongoPool = (connOptions, confOptions = {}) => {
-  const mongoUrl = connOptions.uri;
-  const mongoDB = connOptions.dbName;
+  const { uri: mongoUrl } = connOptions;
+  const { dbName } = connOptions;
   const genPool = genericPool.createPool({
     create: () => MongoClient.connect(mongoUrl, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
       ...confOptions,
     }).then(async client => {
-      const db = client.db(mongoDB);
-      await setupCollections(db);
+      const mDb = client.db(dbName);
+      await setupCollections(mDb);
       return client;
     })
       .catch(err => {
@@ -43,22 +43,22 @@ const mongoPool = (connOptions, confOptions = {}) => {
       ctx.modS.responses.CustomErrors.SERVER_TIMEOUT,
     );
 
-    ctx.db = ctx.mongo.db(mongoDB);
-    pDB = ctx.db;
-    ctx.appDb = setupDatabase(ctx.db);
-    appDb = ctx.appDb;
+    ctx.mongoDb = ctx.mongo.db(dbName);
+    mongoDb = ctx.mongoDb;
+    ctx.db = setupDatabase(ctx.mongoDb);
+    db = ctx.db;
     try {
       await next();
     } finally {
+      ctx.mongoDb = null;
       ctx.db = null;
-      ctx.appDb = null;
       await release(ctx.mongo);
     }
   };
 };
 
-const getDb = () => pDB;
-const getAppDb = colName => (colName ? appDb[colName] : appDb);
+const getMongoDb = () => mongoDb;
+const getDb = colName => (colName ? db[colName] : db);
 
-export { getDb, getAppDb };
+export { getMongoDb, getDb };
 export default mongoPool;

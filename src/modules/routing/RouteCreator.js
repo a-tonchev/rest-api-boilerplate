@@ -1,7 +1,4 @@
 import Router from 'koa-router';
-import CustomErrors from '../responseHandler/CustomErrors';
-
-import { createValidateError } from '../responseHandler/responses';
 import UserAuthentications from '../../lib/users/services/UserAuthentications';
 
 const createBasicRoutes = ({ prefix, routeData = [] }) => {
@@ -22,6 +19,7 @@ const createBasicRoutes = ({ prefix, routeData = [] }) => {
         path,
         // Check user authenticated/logged in if needed
         async (ctx, next) => {
+          const { CustomErrors, createValidateError } = ctx.modS.responses;
           if (authentication) {
             createValidateError(
               await UserAuthentications.isUserAuthenticated(ctx),
@@ -33,11 +31,13 @@ const createBasicRoutes = ({ prefix, routeData = [] }) => {
         },
         // Check user permissions/authorized if needed
         async (ctx, next) => {
+          const { CustomErrors, createValidateError } = ctx.modS.responses;
           if (authorization) createValidateError(await authorization(ctx), ctx, CustomErrors.USER_NOT_AUTHORIZED);
           return next();
         },
         // Validate parameters
         async (ctx, next) => {
+          const { CustomErrors, createValidateError } = ctx.modS.responses;
           if (validation) createValidateError(await validation(ctx), ctx, CustomErrors.BAD_REQUEST);
           return next();
         },

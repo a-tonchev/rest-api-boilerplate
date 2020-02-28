@@ -1,7 +1,7 @@
 import Collections from './Collections';
 
 // Create a collection if not exist, and add validations to it.
-// Else - update collection
+// Else - update collection validations
 
 const createCollection = async (db, name, schema) => {
   const existingCollection = await db.listCollections({ name }).next();

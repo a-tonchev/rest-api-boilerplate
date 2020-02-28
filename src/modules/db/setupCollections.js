@@ -1,5 +1,4 @@
-import setupUserCollection from '../../lib/users/services/setupUserCollection';
-import setupAuthenticationCollection from '../../lib/authentications/services/setupAuthenticationCollection';
+import Collections from './Collections';
 
 const createCollection = async (db, name, schema) => {
   const existingCollection = await db.listCollections({ name }).next();
@@ -20,7 +19,13 @@ const createCollection = async (db, name, schema) => {
 };
 
 const setupCollections = async (db) => {
-  await setupUserCollection(db, createCollection);
-  await setupAuthenticationCollection(db, createCollection);
+  const colPromises = Collections.map(
+    col => (
+      col.setupCollection
+        ? col.setupCollection(db, createCollection)
+        : null
+    ),
+  );
+  return Promise.all(colPromises);
 };
 export default setupCollections;

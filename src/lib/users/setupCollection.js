@@ -1,7 +1,7 @@
-import UserSchema from '../schema/UserSchema';
-import UserEnums from '../enums/UserEnums';
+import UserSchema from './schema/UserSchema';
+import UserEnums from './enums/UserEnums';
 
-const setupUserCollection = async (db, createCollection) => {
+const setupCollection = async (db, createCollection) => {
   await createCollection(db, UserEnums.COLLECTION_NAME, UserSchema);
   const collection = db.collection(UserEnums.COLLECTION_NAME);
   await collection.createIndex({
@@ -9,4 +9,4 @@ const setupUserCollection = async (db, createCollection) => {
   }, { unique: true });
 };
 
-export default setupUserCollection;
+export default setupCollection;

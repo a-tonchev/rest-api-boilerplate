@@ -42,8 +42,8 @@ const mongoPool = (connOptions, confOptions = {}) => {
     ctx.db = ctx.mongo.db(mongoDB);
     pDB = ctx.db;
     ctx.appDb = setupDatabase(ctx.db);
-    appDb = ctx.appDb;
     await setupCollections(pDB);
+    appDb = ctx.appDb;
     try {
       await next();
     } finally {

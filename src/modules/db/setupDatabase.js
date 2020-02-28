@@ -1,10 +1,11 @@
-import getCollection from './getCollection';
-import UserEnums from '../../lib/users/enums/UserEnums';
-import AuthenticationEnums from '../../lib/authentications/enums/AuthenticationEnums';
+import Collections from './Collections';
 
-const setupDatabase = db => ({
-  users: getCollection(UserEnums.COLLECTION_NAME, db),
-  authentications: getCollection(AuthenticationEnums.COLLECTION_NAME, db),
-});
+const setupDatabase = db => {
+  const dbCols = {};
+  Collections.forEach(col => {
+    dbCols[col.collectionName] = db.collection(col.collectionName);
+  });
+  return dbCols;
+};
 
 export default setupDatabase;

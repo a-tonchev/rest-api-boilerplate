@@ -1,6 +1,11 @@
 import UserEnums from './enums/UserEnums';
-import { getAppDb } from '../../modules/db/mongoPool';
+import setupCollection from './setupCollection';
+import UserSchema from './schema/UserSchema';
 
-const Users = () => getAppDb(UserEnums.COLLECTION_NAME);
+const Users = {
+  collectionName: UserEnums.COLLECTION_NAME,
+  setupCollection,
+  schema: UserSchema,
+};
 
 export default Users;

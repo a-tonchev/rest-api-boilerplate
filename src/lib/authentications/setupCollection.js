@@ -1,9 +1,9 @@
 import AuthenticationSchema from './schema/AuthenticationSchema';
 import AuthenticationEnums from './enums/AuthenticationEnums';
 
-const setupCollection = async (db, createCollection) => {
-  await createCollection(db, AuthenticationEnums.COLLECTION_NAME, AuthenticationSchema);
-  const collection = db.collection(AuthenticationEnums.COLLECTION_NAME);
+const setupCollection = async (mongoDb, createCollection) => {
+  await createCollection(mongoDb, AuthenticationEnums.COLLECTION_NAME, AuthenticationSchema);
+  const collection = mongoDb.collection(AuthenticationEnums.COLLECTION_NAME);
   await collection.createIndex({
     userId: 1,
     lastActivity: 1,

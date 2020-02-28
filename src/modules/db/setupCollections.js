@@ -3,17 +3,17 @@ import Collections from './Collections';
 // Create a collection if not exist, and add validations to it.
 // Else - update collection validations
 
-const createCollection = async (db, name, schema) => {
-  const existingCollection = await db.listCollections({ name }).next();
+const createCollection = async (mongoDb, name, schema) => {
+  const existingCollection = await mongoDb.listCollections({ name }).next();
   if (existingCollection) {
-    await db.command({
+    await mongoDb.command({
       collMod: name,
       validator: { $jsonSchema: schema },
       validationLevel: 'strict',
       validationAction: 'error',
     });
   } else {
-    await db.createCollection(name, {
+    await mongoDb.createCollection(name, {
       validator: { $jsonSchema: schema },
       validationLevel: 'strict',
       validationAction: 'error',
@@ -21,11 +21,11 @@ const createCollection = async (db, name, schema) => {
   }
 };
 
-const setupCollections = async (db) => {
+const setupCollections = async (mongoDb) => {
   const colPromises = Collections.map(
     col => (
       col.setupCollection
-        ? col.setupCollection(db, createCollection)
+        ? col.setupCollection(mongoDb, createCollection)
         : null
     ),
   );

@@ -41,10 +41,12 @@ yarn start
 ```
 ### The boilerplate provides all services in the ctx object:
 
+```
 ctx.db - the mongodb
 ctx.appDb - the mongodb collections, prepared for mongo queries (e.g. ctx.appDb.users or ctx.appDb.products etc...)
 ctx.libS - All services/library that serve the collections
 ctx.modS - All services/modules that serve different purposes
+```
 
 ### Each route request have following steps (managed by the own route-creator):
 

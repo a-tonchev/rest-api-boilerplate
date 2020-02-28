@@ -14,7 +14,11 @@ const mongoPool = (connOptions, confOptions = {}) => {
       useNewUrlParser: true,
       useUnifiedTopology: true,
       ...confOptions,
-    }).then(client => client)
+    }).then(async client => {
+      const db = client.db(mongoDB);
+      await setupCollections(db);
+      return client;
+    })
       .catch(err => {
         console.log(err);
         return null;
@@ -42,7 +46,6 @@ const mongoPool = (connOptions, confOptions = {}) => {
     ctx.db = ctx.mongo.db(mongoDB);
     pDB = ctx.db;
     ctx.appDb = setupDatabase(ctx.db);
-    await setupCollections(pDB);
     appDb = ctx.appDb;
     try {
       await next();

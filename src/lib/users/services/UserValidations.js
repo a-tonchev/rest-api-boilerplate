@@ -4,13 +4,12 @@ import CommonSchemaFields from '../../../modules/validation/CommonSchemaFields';
 export default class UserValidations {
   static async validateSignUp(ctx) {
     const { email, password } = ctx.request.body;
-    const preparedSchema = ctx.modS.validations.prepareForParamsValidation(UserSchemaFields);
     const valid = ctx.modS.validations.validateSchema(ctx, { email, password }, {
       bsonType: 'object',
       required: ['email', 'password'],
       properties: {
-        email: preparedSchema.email,
-        password: preparedSchema.password,
+        email: UserSchemaFields.email,
+        password: UserSchemaFields.password,
       },
     });
     const { createValidateError, CustomErrors } = ctx.modS.responses;
@@ -24,13 +23,12 @@ export default class UserValidations {
 
   static async validateLogin(ctx) {
     const { email, password } = ctx.request.body;
-    const validations = ctx.modS.validations.prepareForParamsValidation(CommonSchemaFields);
     return ctx.modS.validations.validateSchema(ctx, { email, password }, {
       bsonType: 'object',
       required: ['email', 'password'],
       properties: {
-        email: validations.basicString,
-        password: validations.basicString,
+        email: UserSchemaFields.email,
+        password: CommonSchemaFields.basicString,
       },
     });
   }

@@ -7,16 +7,26 @@ AjvBson(ajv);
 AjvErrors(ajv);
 
 export default class Validations {
-  static prepareForParamsValidation(schemaFields) {
-    const preparedFields = {};
-    Object.keys(schemaFields).forEach(item => {
-      preparedFields[item] = { ...schemaFields[item], errorMessage: item };
+  static prepareProperties({ properties, ...schemaFields }) {
+    const preparedFields = { ...schemaFields };
+    const preparedProperties = {};
+    Object.keys(properties).forEach(item => {
+      const preparedObject = properties[item].properties
+        ? Validations.prepareProperties(properties[item])
+        : properties[item];
+
+      preparedProperties[item] = {
+        ...preparedObject,
+        errorMessage: item,
+      };
     });
+    preparedFields.properties = preparedProperties;
     return preparedFields;
   }
 
   static validateSchema(ctx, data, schema) {
-    const validate = ajv.compile(schema);
+    const preparedSchema = this.prepareProperties(schema);
+    const validate = ajv.compile(preparedSchema);
     const valid = validate(data);
     if (!ctx) return valid;
     if (!valid) {

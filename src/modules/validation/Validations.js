@@ -25,7 +25,7 @@ export default class Validations {
   }
 
   static validateSchema(ctx, data, schema) {
-    const preparedSchema = this.prepareProperties(schema);
+    const preparedSchema = Validations.prepareProperties(schema);
     const validate = ajv.compile(preparedSchema);
     const valid = validate(data);
     if (!ctx) return valid;

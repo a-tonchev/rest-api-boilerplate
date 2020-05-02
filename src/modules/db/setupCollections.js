@@ -1,4 +1,4 @@
-import Collections from './Collections';
+import { Config } from '../../Config';
 
 // Create a collection if not exist, and add validations to it.
 // Else - update collection validations
@@ -22,7 +22,7 @@ const createCollection = async (mongoDb, name, schema) => {
 };
 
 const setupCollections = async (mongoDb) => {
-  const colPromises = Collections.map(
+  const colPromises = Config.collections.map(
     col => (
       col.setupCollection
         ? col.setupCollection(mongoDb, createCollection)

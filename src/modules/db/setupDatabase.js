@@ -1,8 +1,8 @@
-import Collections from './Collections';
+import { Config } from '../../Config';
 
 const setupDatabase = mongoDb => {
   const dbCols = {};
-  Collections.forEach(col => {
+  Config.collections.forEach(col => {
     dbCols[col.collectionName] = mongoDb.collection(col.collectionName);
   });
   return dbCols;

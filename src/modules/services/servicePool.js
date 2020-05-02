@@ -1,11 +1,11 @@
-import { setupLibs, setupMods } from './setupServices';
+import { Config } from '../../Config';
 
 let modServices;
 let libServices;
 
 class servicePool {
   static async setupModServices(ctx, next) {
-    ctx.modS = setupMods();
+    ctx.modS = Config.setupMods();
     modServices = ctx.modS;
 
     try {
@@ -17,7 +17,7 @@ class servicePool {
   }
 
   static async setupLibServices(ctx, next) {
-    ctx.libS = setupLibs(ctx);
+    ctx.libS = Config.setupLibs(ctx);
 
     libServices = ctx.libS;
     try {

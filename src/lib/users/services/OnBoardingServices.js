@@ -1,3 +1,5 @@
+import { UserRoles, UserStatuses } from '../enums/UserEnums';
+
 export default class OnBoardingServices {
   static async makeUniqueClientNumber(ctx) {
     const tempCN = ctx.modS.string.generateToken(6, false);
@@ -27,7 +29,8 @@ export default class OnBoardingServices {
           ],
         },
       },
-      roles: [],
+      status: UserStatuses.ACTIVE,
+      roles: [UserRoles.USER],
       clientNumber: await this.makeUniqueClientNumber(ctx),
       profile: profile || {},
       settings: {

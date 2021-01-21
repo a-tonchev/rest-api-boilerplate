@@ -1,10 +1,15 @@
 {
   "name": "koa-rest-mongodb",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "index_cjs.cjs",
   "Author": "Anton Tonchev",
   "license": "MIT",
   "private": true,
+  "type": "module",
+  "exports": {
+    "import": "./index.js",
+    "require": "./index_cjs.cjs"
+  },
   "dependencies": {
     "ajv": "^6.10.2",
     "ajv-bsontype": "^1.0.7",
@@ -14,18 +19,21 @@
     "generic-pool": "^3.7.1",
     "koa": "^2.11.0",
     "koa-bodyparser": "^4.2.1",
-    "koa-router": "^7.4.0",
-    "koa-useragent": "^3.0.0",
+    "koa-router": "^10.0.0",
+    "koa-useragent": "^4.0.0",
+    "lodash-es": "^4.17.20",
+    "mongo-dot-notation": "^2.0.0",
     "mongodb": "^3.4.0",
     "nodemon": "^2.0.2"
   },
   "scripts": {
-    "start": "./node_modules/nodemon/bin/nodemon.js index.js",
+    "start": "node --es-module-specifier-resolution=node index.js",
+    "start-dev": "environment=local ./node_modules/nodemon/bin/nodemon.js --es-module-specifier-resolution=node index.js",
     "lint": "eslint src/**/*.js startup/**/*.js --fix"
   },
   "devDependencies": {
     "babel-eslint": "^10.0.3",
-    "eslint": "^6.7.2",
+    "eslint": "^7.18.0",
     "eslint-config-airbnb-base": "^14.0.0",
     "eslint-plugin-import": "^2.19.1",
     "eslint-plugin-prettier": "^3.1.1"

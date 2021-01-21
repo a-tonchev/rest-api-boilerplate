@@ -20,7 +20,10 @@ const createBasicRoutes = ({ prefix, routeData = [] }) => {
         // Check user authenticated/logged in if needed
         async (ctx, next) => {
           const { CustomErrors, createValidateError } = ctx.modS.responses;
-          if (authentication) {
+          const authenticationCheck = typeof authentication === 'function'
+            ? await authentication(ctx)
+            : authentication;
+          if (authenticationCheck) {
             createValidateError(
               await UserAuthentications.isUserAuthenticated(ctx),
               ctx,

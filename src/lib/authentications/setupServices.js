@@ -1,12 +1,20 @@
 import AuthenticationEnums from './enums/AuthenticationEnums';
 import AuthenticationServices from './services/AuthenticationServices';
 
+/**
+ * @param  {object} ctx
+ *
+ * @return {{ authentications: AuthenticationServices }}
+ *
+ */
+
 const setupServices = ctx => {
   const { db } = ctx;
-  const authentications = db[AuthenticationEnums.COLLECTION_NAME];
+  const collection = db[AuthenticationEnums.COLLECTION_NAME];
 
+  // noinspection JSValidateTypes
   return {
-    authentications: new AuthenticationServices(authentications),
+    [AuthenticationEnums.COLLECTION_NAME]: new AuthenticationServices(collection),
   };
 };
 

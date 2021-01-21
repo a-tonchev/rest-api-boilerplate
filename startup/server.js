@@ -3,9 +3,11 @@ import bodyParser from 'koa-bodyparser';
 import { userAgent } from 'koa-useragent';
 import mongoPool from '../src/modules/db/mongoPool';
 import routers from './routes/routes';
-import settings from '../../settings';
 import UserAuthentications from '../src/lib/users/services/UserAuthentications';
 import servicePool from '../src/modules/services/servicePool';
+import SettingsServices from '../src/modules/settings/SettingsServices';
+
+const settingsToUse = SettingsServices.getSettings();
 
 const app = new Koa();
 app.use(async (ctx, next) => {
@@ -24,9 +26,12 @@ app.use(async (ctx, next) => {
 
 app.on('error', (err, ctx) => {
   // TODO - need to be reported later
-  console.warn('Error occurs: ', err.message);
+  console.warn('Error message: ', err.message);
   console.warn('Error code: ', ctx.status);
-  console.log(err);
+  console.warn('Error delivered: ', ctx.body);
+  if (ctx.state.realError) {
+    console.warn('Real Error: ', ctx.state.realError);
+  }
 });
 
 app.use(servicePool.setupModServices);
@@ -34,8 +39,10 @@ app.use(servicePool.setupModServices);
 app.use(userAgent);
 
 app.use(mongoPool({
-  uri: settings.MONGO_URL,
-  dbName: settings.dbName,
+  uri: settingsToUse.MONGO_URL,
+  dbName: settingsToUse.dbName,
+  max: 500,
+  min: 1,
 }));
 
 app.use(servicePool.setupLibServices);

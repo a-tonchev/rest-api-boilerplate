@@ -1,13 +1,20 @@
 import UserServices from './services/UserServices';
-import OnBoardingServices from './services/OnBoardingServices';
 import UserEnums from './enums/UserEnums';
+
+/**
+ * @param  {object} ctx
+ *
+ * @return {{ users: UserServices }}
+ *
+ */
 
 const setupServices = ctx => {
   const { db } = ctx;
-  const users = db[UserEnums.COLLECTION_NAME];
+  const collection = db[UserEnums.COLLECTION_NAME];
+
+  // noinspection JSValidateTypes
   return {
-    users: new UserServices(users),
-    onBoarding: OnBoardingServices,
+    [UserEnums.COLLECTION_NAME]: new UserServices(collection),
   };
 };
 

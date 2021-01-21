@@ -8,6 +8,9 @@ const {
   name,
   website,
   language,
+  phone,
+  roles,
+  status,
 } = UserSchemaFields;
 
 const {
@@ -15,7 +18,42 @@ const {
   basicString,
   basicBoolean,
   date,
+  requiredString,
+  positiveNumber,
+  emptyString,
 } = CommonSchemaFields;
+
+const AddressBaseSchema = {
+  bsonType: 'object',
+  required: [
+    'firstName',
+    'lastName',
+    'addressLine1',
+    'country',
+    'city',
+    'zip',
+  ],
+  additionalProperties: false,
+  properties: {
+    _id: basicString,
+    firstName: name,
+    lastName: name,
+    companyName: basicString,
+    addressLine1: basicString,
+    addressLine2: basicString,
+    country: basicString,
+    stateProvince: basicString,
+    city: basicString,
+    zip: basicString,
+    phone: {
+      anyOf: [
+        emptyString,
+        phone,
+      ],
+    },
+    email: email,
+  },
+};
 
 const UserSchema = {
   bsonType: 'object',
@@ -27,6 +65,7 @@ const UserSchema = {
     'profile',
     'updatedAt',
     'createdAt',
+    'status',
   ],
   additionalProperties: false,
   properties: {
@@ -42,7 +81,7 @@ const UserSchema = {
     },
     services: {
       bsonType: 'object',
-      required: ['password'],
+      required: ['password', 'email'],
       additionalProperties: false,
       properties: {
         password: {
@@ -51,6 +90,8 @@ const UserSchema = {
           additionalProperties: false,
           properties: {
             bcrypt: encryptedPassword,
+            resetPasswordToken: requiredString,
+            lastResetRequest: date,
           },
         },
         email: {
@@ -62,19 +103,33 @@ const UserSchema = {
               items: {
                 bsonType: 'object',
                 properties: {
-                  token: {
-                    bsonType: 'string',
-                    minLength: 1,
-                  },
+                  token: requiredString,
                   createdAt: date,
                 },
               },
             },
+            lastVerificationSent: date,
+          },
+        },
+        payment: {
+          bsonType: 'object',
+          additionalProperties: false,
+          properties: {
+            stripeId: requiredString,
+          },
+        },
+        security: {
+          bsonType: 'object',
+          additionalProperties: false,
+          properties: {
+            loginAttempts: positiveNumber,
+            lastLoginAttempt: date,
           },
         },
       },
     },
     clientNumber: clientNumber,
+    status,
     profile: {
       bsonType: 'object',
       additionalProperties: false,
@@ -88,25 +143,13 @@ const UserSchema = {
           },
         },
         website,
-        address: {
-          bsonType: 'object',
-          additionalProperties: false,
-          properties: {
-            country: basicString,
-            street: basicString,
-            city: basicString,
-            postalCode: basicString,
-          },
-        },
+        phone,
+        address: AddressBaseSchema,
         companyName: basicString,
         industry: basicString,
-        phone: basicString,
       },
     },
-    roles: {
-      bsonType: 'array',
-      items: basicString,
-    },
+    roles,
     settings: {
       bsonType: 'object',
       additionalProperties: false,
@@ -120,4 +163,5 @@ const UserSchema = {
   },
 };
 
+export { AddressBaseSchema };
 export default UserSchema;

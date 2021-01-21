@@ -26,3 +26,4 @@ classes/
 target/
 /.idea/
 /node_modules/
+/settings.js

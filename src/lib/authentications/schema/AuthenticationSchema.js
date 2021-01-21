@@ -9,6 +9,7 @@ const {
 const {
   _id,
   date,
+  basicBoolean,
 } = CommonSchemaFields;
 
 const {
@@ -27,6 +28,7 @@ const AuthenticationSchema = {
     _id,
     userId,
     userAgent,
+    active: basicBoolean,
     lastActivity: date,
     createdAt: date,
   },

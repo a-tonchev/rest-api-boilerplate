@@ -7,6 +7,9 @@ const setupCollection = async (mongoDb, createCollection) => {
   await collection.createIndex({
     'email.address': 1,
   }, { unique: true });
+  await collection.createIndex({
+    clientNumber: 1,
+  }, { unique: true });
 };
 
 export default setupCollection;

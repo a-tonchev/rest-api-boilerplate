@@ -5,24 +5,31 @@ const createSuccessResponse = (ctx, data = {}) => ctx.body = {
   data,
 };
 
-const createErrorResponse = (ctx, errorEl, data = {}) => {
+const createErrorResponse = (ctx, errorEl, data = {}, realError = null) => {
   let customError;
+
   if (typeof errorEl === 'string') {
-    customError = errorEl && CustomErrors[errorEl] ? CustomErrors[errorEl] : CustomErrors.BAD_REQUEST;
+    customError = errorEl && CustomErrors[errorEl]
+      ? CustomErrors[errorEl]
+      : CustomErrors.BAD_REQUEST;
   } else if (typeof errorEl === 'object') {
     customError = errorEl;
   } else {
     customError = CustomErrors.BAD_REQUEST;
   }
+
   const body = {
     code: customError.errorCode,
     ok: false,
     data,
   };
+
   const errorMessage = customError.message ? customError.message : '';
   const statusCode = customError.statusCode ?
     customError.statusCode :
     CustomErrors.BAD_REQUEST.statusCode;
+  ctx.state.realError = realError;
+
   return ctx.throw(statusCode, errorMessage, body);
 };
 

@@ -9,6 +9,7 @@ import {
 import CustomErrors from './modules/responseHandler/CustomErrors';
 import string from './modules/helpers/StringHelper';
 import date from './modules/helpers/DateHelper';
+import EmailServices from './modules/email/EmailServices';
 
 class Config {
   // All collections need to be stored here
@@ -16,11 +17,10 @@ class Config {
 
   // All collections services need to be setup here
   static setupLibs(ctx) {
-    const { users, onBoarding } = Users.setupServices(ctx);
+    const { users } = Users.setupServices(ctx);
     const { authentications } = Authentications.setupServices(ctx);
     return {
       users,
-      onBoarding,
       authentications,
     };
   }
@@ -37,6 +37,7 @@ class Config {
       },
       string,
       date,
+      email: EmailServices,
     };
   }
 }

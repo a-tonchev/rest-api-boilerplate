@@ -1,4 +1,5 @@
 import bcrypt from 'bcrypt';
+import crypto from 'crypto';
 
 export default class StringHelper {
   static generateToken(length, lowCase = true, highCase = true, numbers = true) {
@@ -20,4 +21,9 @@ export default class StringHelper {
   static async compareBcrypt(plainText, hash) {
     return bcrypt.compare(plainText, hash);
   }
+
+  static createHash = elements => {
+    const stringToHash = Array.isArray(elements) ? elements.join('') : `${elements}`;
+    return crypto.createHash('sha1').update(stringToHash).digest('base64');
+  };
 }

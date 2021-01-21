@@ -1,8 +1,9 @@
-import { MongoClient } from 'mongodb';
+import mongodb from 'mongodb';
 import genericPool from 'generic-pool';
 import setupCollections from './setupCollections';
 import setupDatabase from './setupDatabase';
 
+const { MongoClient } = mongodb;
 let mongoDb;
 let db;
 
@@ -33,6 +34,13 @@ const mongoPool = (connOptions, confOptions = {}) => {
       await genPool.release(resource);
     }
   }
+
+  process.on('SIGINT', function () {
+    genPool.drain().then(function () {
+      genPool.clear();
+      process.exit();
+    });
+  });
 
   return async (ctx, next) => {
     ctx.mongo = await genPool.acquire();

@@ -1,6 +1,7 @@
 import Ajv from 'ajv';
 import AjvBson from 'ajv-bsontype';
 import AjvErrors from 'ajv-errors';
+import cloneDeep from 'lodash-es/cloneDeep';
 
 const ajv = new Ajv({ allErrors: true, jsonPointers: true });
 AjvBson(ajv);
@@ -24,7 +25,14 @@ export default class Validations {
     return preparedFields;
   }
 
-  static validateSchema(ctx, data, schema) {
+  static validateSchema(ctx, data, schemaToUse, attributesToExclude, returnErrors = false) {
+    const fullSchema = cloneDeep(schemaToUse);
+    const schema = (attributesToExclude)
+      ? Validations.getSchemaWithoutAttributes(
+        fullSchema,
+        attributesToExclude,
+      )
+      : fullSchema;
     const preparedSchema = Validations.prepareProperties(schema);
     const validate = ajv.compile(preparedSchema);
     const valid = validate(data);
@@ -39,11 +47,28 @@ export default class Validations {
         return message;
       }) : [];
 
-      return ctx.modS.responses.createErrorResponse(
-        ctx, ctx.modS.responses.CustomErrors.BAD_REQUEST,
-        { errors },
-      );
+      if (!returnErrors) {
+        return ctx.modS.responses.createErrorResponse(
+          ctx,
+          ctx.modS.responses.CustomErrors.BAD_REQUEST,
+          { errors },
+          JSON.stringify(validate.errors),
+        );
+      }
+      return errors;
     }
     return valid;
+  }
+
+  static getSchemaWithoutAttributes(schema, attributesToRemove) {
+    const { properties, required, ...data } = schema;
+    attributesToRemove.forEach(attribute => {
+      delete properties[attribute];
+    });
+    return {
+      ...data,
+      required: required.filter(rq => !attributesToRemove.includes(rq)),
+      properties,
+    };
   }
 }

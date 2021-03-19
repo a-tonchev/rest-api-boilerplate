@@ -7,6 +7,8 @@ const { MongoClient } = mongodb;
 let mongoDb;
 let db;
 
+let databasesEnsured = false;
+
 const mongoPool = (connOptions, confOptions = {}) => {
   const { uri: mongoUrl } = connOptions;
   const { dbName } = connOptions;
@@ -16,8 +18,12 @@ const mongoPool = (connOptions, confOptions = {}) => {
       useUnifiedTopology: true,
       ...confOptions,
     }).then(async client => {
-      const mDb = client.db(dbName);
-      await setupCollections(mDb);
+      if (!databasesEnsured) {
+        databasesEnsured = true;
+        console.log('---Ensure database, collections and validations');
+        const mDb = client.db(dbName);
+        await setupCollections(mDb);
+      }
       return client;
     })
       .catch(err => {

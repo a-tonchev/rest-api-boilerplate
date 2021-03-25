@@ -1,10 +1,10 @@
-class EmailServices {
-  static getMailSettings(ctx) {
+const EmailServices = {
+  getMailSettings(ctx) {
     // Put here mail stuff you need
     return { ctx };
-  }
+  },
 
-  static async sendMail(
+  async sendMail(
     mailSettings,
     {
       to, toMany, subject, paramsToReplace, templateName,
@@ -15,9 +15,9 @@ class EmailServices {
     console.log('subject: ', subject);
     console.log('paramsToReplace: ', paramsToReplace);
     console.log('templateName: ', templateName);
-  }
+  },
 
-  static async sendVerificationMail(mailSettings, to, verificationToken) {
+  async sendVerificationMail(mailSettings, to, verificationToken) {
     return EmailServices.sendMail(
       mailSettings,
       {
@@ -27,9 +27,9 @@ class EmailServices {
         templateName: 'email-verification',
       },
     );
-  }
+  },
 
-  static async sendRegistrationSuccess(mailSettings, to) {
+  async sendRegistrationSuccess(mailSettings, to) {
     return EmailServices.sendMail(
       mailSettings,
       {
@@ -39,9 +39,9 @@ class EmailServices {
         templateName: 'registration-success',
       },
     );
-  }
+  },
 
-  static async sendPasswordReset(mailSettings, to, resetToken) {
+  async sendPasswordReset(mailSettings, to, resetToken) {
     return EmailServices.sendMail(
       mailSettings,
       {
@@ -53,19 +53,19 @@ class EmailServices {
         templateName: 'reset-password',
       },
     );
-  }
+  },
 
-  static async sendPasswordResetSuccess(mailSettings, to) {
+  async sendPasswordResetSuccess(mailSettings, to) {
     return EmailServices.sendMail(
       mailSettings,
       {
         to,
-        subject: `[Some Title]: Password reset successfully!`,
+        subject: '[Some Title]: Password reset successfully!',
         paramsToReplace: {},
         templateName: 'reset-password-success',
       },
     );
-  }
-}
+  },
+};
 
 export default EmailServices;

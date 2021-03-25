@@ -17,8 +17,8 @@ const canUserLogin = (ctx, user) => {
   return true;
 };
 
-export default class UserValidations {
-  static async validateSignUp(ctx) {
+const UserValidations = {
+  async validateSignUp(ctx) {
     const { email, password } = ctx.request.body;
     const { validateSchema } = ctx.modS.validations;
 
@@ -38,9 +38,9 @@ export default class UserValidations {
       CustomErrors.USER_ALREADY_EXISTS,
     );
     return valid;
-  }
+  },
 
-  static async validateGetByClientNumber(ctx) {
+  async validateGetByClientNumber(ctx) {
     const { clientNumber } = ctx.request.body;
     return ctx.modS.validations.validateSchema(ctx, { clientNumber }, {
       bsonType: 'object',
@@ -49,9 +49,9 @@ export default class UserValidations {
         clientNumber: UserSchemaFields.clientNumber,
       },
     });
-  }
+  },
 
-  static async validateUpdateUser(ctx) {
+  async validateUpdateUser(ctx) {
     const { body } = ctx.request;
     const {
       ...userFields
@@ -66,9 +66,9 @@ export default class UserValidations {
         roles: UserSchemaFields.roles,
       },
     });
-  }
+  },
 
-  static async validateSendVerification(ctx) {
+  async validateSendVerification(ctx) {
     const { email } = ctx.request.body;
     return ctx.modS.validations.validateSchema(ctx, { email }, {
       bsonType: 'object',
@@ -77,9 +77,9 @@ export default class UserValidations {
         clientNumber: UserSchemaFields.email,
       },
     });
-  }
+  },
 
-  static async validateVerify(ctx) {
+  async validateVerify(ctx) {
     const { verificationToken } = ctx.request.body;
     const valid = ctx.modS.validations.validateSchema(ctx, { verificationToken }, {
       bsonType: 'object',
@@ -92,9 +92,9 @@ export default class UserValidations {
     if (!user) return false;
     ctx.state.user = user;
     return valid;
-  }
+  },
 
-  static async validateLogin(ctx) {
+  async validateLogin(ctx) {
     const { email, password } = ctx.request.body;
     const valid = ctx.modS.validations.validateSchema(ctx, { email, password }, {
       bsonType: 'object',
@@ -137,9 +137,9 @@ export default class UserValidations {
     await ctx.libS.users.resetLoginAttempts(user);
     ctx.state.user = user;
     return true;
-  }
+  },
 
-  static async validateResetRequest(ctx) {
+  async validateResetRequest(ctx) {
     const { email } = ctx.request.body;
     const valid = ctx.modS.validations.validateSchema(ctx, { email }, {
       bsonType: 'object',
@@ -163,9 +163,9 @@ export default class UserValidations {
     }
     ctx.state.user = user;
     return valid;
-  }
+  },
 
-  static async validateResetPassword(ctx) {
+  async validateResetPassword(ctx) {
     const { password, resetToken } = ctx.request.body;
     const valid = ctx.modS.validations.validateSchema(ctx, { password, resetToken }, {
       bsonType: 'object',
@@ -186,9 +186,9 @@ export default class UserValidations {
     ctx.state.resetToken = resetToken;
     ctx.state.password = await ctx.modS.string.generateBcrypt(password);
     return valid;
-  }
+  },
 
-  static async validateUpdatePassword(ctx) {
+  async validateUpdatePassword(ctx) {
     const { currentPassword, password } = ctx.request.body;
     const valid = ctx.modS.validations.validateSchema(ctx, { currentPassword, password }, {
       bsonType: 'object',
@@ -211,9 +211,9 @@ export default class UserValidations {
     );
     ctx.state.password = await ctx.modS.string.generateBcrypt(password);
     return valid;
-  }
+  },
 
-  static async validateUpdateProfile(ctx) {
+  async validateUpdateProfile(ctx) {
     const { prepareProperties, validateSchema } = ctx.modS.validations;
     const profileSchema = UserSchema.properties.profile;
     const {
@@ -223,5 +223,7 @@ export default class UserValidations {
       profileSchema,
     );
     return validateSchema(ctx, profile, validationSchema);
-  }
-}
+  },
+};
+
+export default UserValidations;

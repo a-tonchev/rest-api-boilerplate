@@ -3,8 +3,8 @@ import { Config } from '../../Config';
 let modServices;
 let libServices;
 
-class servicePool {
-  static async setupModServices(ctx, next) {
+const servicePool = {
+  async setupModServices(ctx, next) {
     ctx.modS = Config.setupMods();
     modServices = ctx.modS;
 
@@ -14,9 +14,9 @@ class servicePool {
       modServices = null;
       ctx.modS = null;
     }
-  }
+  },
 
-  static async setupLibServices(ctx, next) {
+  async setupLibServices(ctx, next) {
     ctx.libS = Config.setupLibs(ctx);
 
     libServices = ctx.libS;
@@ -26,8 +26,8 @@ class servicePool {
       libServices = null;
       ctx.libS = null;
     }
-  }
-}
+  },
+};
 
 const getModS = (serviceName) => (serviceName ? modServices[serviceName] : modServices);
 const getLibS = (serviceName) => (serviceName ? libServices[serviceName] : libServices);

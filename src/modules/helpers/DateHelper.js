@@ -1,37 +1,37 @@
-export default class DateHelper {
-  static getNow() {
+const DateHelper = {
+  getNow() {
     return new Date(Date.now());
-  }
+  },
 
-  static getBefore(dateObject) {
+  getBefore(dateObject) {
     return new Date(Date.now() - this.getDateBase(dateObject));
-  }
+  },
 
-  static getAfter(dateObject) {
+  getAfter(dateObject) {
     return new Date(Date.now() + this.getDateBase(dateObject));
-  }
+  },
 
-  static getDateAt(dateObject) {
+  getDateAt(dateObject) {
     return new Date(this.getDateBase(dateObject));
-  }
+  },
 
-  static getDateToDay(dateObject) {
+  getDateToDay(dateObject) {
     return new Date(dateObject.getFullYear(), dateObject.getMonth(), dateObject.getDate());
-  }
+  },
 
-  static getTimestamp() {
+  getTimestamp() {
     return Date.now();
-  }
+  },
 
-  static getTimestampBefore(dateObject) {
+  getTimestampBefore(dateObject) {
     return this.getTimestamp() - this.getDateBase(dateObject);
-  }
+  },
 
-  static getTimestampAfter(dateObject) {
+  getTimestampAfter(dateObject) {
     return this.getTimestamp() + this.getDateBase(dateObject);
-  }
+  },
 
-  static getDateBase({
+  getDateBase({
     seconds = 0,
     minutes = 0,
     hours = 0,
@@ -49,33 +49,35 @@ export default class DateHelper {
       this.getMonthsBase(months) +
       this.getYearsBase(years)
     );
-  }
+  },
 
-  static getSecondsBase(seconds = 0) {
+  getSecondsBase(seconds = 0) {
     return seconds * 1000;
-  }
+  },
 
-  static getMinutesBase(minutes = 0) {
+  getMinutesBase(minutes = 0) {
     return minutes * 60 * 1000;
-  }
+  },
 
-  static getHoursBase(hours = 0) {
+  getHoursBase(hours = 0) {
     return hours * 60 * 60 * 1000;
-  }
+  },
 
-  static getDaysBase(days = 0) {
+  getDaysBase(days = 0) {
     return days * 24 * 60 * 60 * 1000;
-  }
+  },
 
-  static getWeeksBase(weeks = 0) {
+  getWeeksBase(weeks = 0) {
     return weeks * 7 * 24 * 60 * 60 * 1000;
-  }
+  },
 
-  static getMonthsBase(months = 0) {
+  getMonthsBase(months = 0) {
     return months * 30 * 24 * 60 * 60 * 1000;
-  }
+  },
 
-  static getYearsBase(years = 0) {
+  getYearsBase(years = 0) {
     return years * 365 * 24 * 60 * 60 * 1000;
-  }
-}
+  },
+};
+
+export default DateHelper;

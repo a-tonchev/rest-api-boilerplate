@@ -7,8 +7,8 @@ const ajv = new Ajv({ allErrors: true, jsonPointers: true });
 AjvBson(ajv);
 AjvErrors(ajv);
 
-export default class Validations {
-  static prepareProperties({ properties, ...schemaFields }) {
+const Validations = {
+  prepareProperties({ properties, ...schemaFields }) {
     const preparedFields = { ...schemaFields };
     const preparedProperties = {};
     Object.keys(properties).forEach(item => {
@@ -23,9 +23,9 @@ export default class Validations {
     });
     preparedFields.properties = preparedProperties;
     return preparedFields;
-  }
+  },
 
-  static validateSchema(ctx, data, schemaToUse, attributesToExclude, returnErrors = false) {
+  validateSchema(ctx, data, schemaToUse, attributesToExclude, returnErrors = false) {
     const fullSchema = cloneDeep(schemaToUse);
     const schema = (attributesToExclude)
       ? Validations.getSchemaWithoutAttributes(
@@ -58,9 +58,9 @@ export default class Validations {
       return errors;
     }
     return valid;
-  }
+  },
 
-  static getSchemaWithoutAttributes(schema, attributesToRemove) {
+  getSchemaWithoutAttributes(schema, attributesToRemove) {
     const { properties, required, ...data } = schema;
     attributesToRemove.forEach(attribute => {
       delete properties[attribute];
@@ -70,5 +70,7 @@ export default class Validations {
       required: required.filter(rq => !attributesToRemove.includes(rq)),
       properties,
     };
-  }
-}
+  },
+};
+
+export default Validations;

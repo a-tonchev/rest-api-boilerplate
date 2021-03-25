@@ -1,10 +1,10 @@
-export default class UserAuthentications {
-  static async isUserAuthenticated(ctx) {
+const UserAuthentications = {
+  async isUserAuthenticated(ctx) {
     const { user } = ctx.state;
     return !!user;
-  }
+  },
 
-  static async logoutUser(ctx, token) {
+  async logoutUser(ctx, token) {
     try {
       if (token) {
         await ctx.libS.authentications.deactivateAuthentication(token);
@@ -17,9 +17,9 @@ export default class UserAuthentications {
         err,
       );
     }
-  }
+  },
 
-  static async setupAuthentication(ctx, next) {
+  async setupAuthentication(ctx, next) {
     const { header } = ctx.request;
     const headerKey = 'Bearer';
     let token;
@@ -58,5 +58,7 @@ export default class UserAuthentications {
     } finally {
       ctx.state.user = null;
     }
-  }
-}
+  },
+};
+
+export default UserAuthentications;

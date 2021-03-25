@@ -11,22 +11,22 @@ import string from './modules/helpers/StringHelper';
 import date from './modules/helpers/DateHelper';
 import EmailServices from './modules/email/EmailServices';
 
-class Config {
+const Config = {
   // All collections need to be stored here
-  static collections = [Users, Authentications];
+  collections: [Users, Authentications],
 
   // All collections services need to be setup here
-  static setupLibs(ctx) {
+  setupLibs(ctx) {
     const { users } = Users.setupServices(ctx);
     const { authentications } = Authentications.setupServices(ctx);
     return {
       users,
       authentications,
     };
-  }
+  },
 
-  // All static modules services need to be setup here
-  static setupMods() {
+  // All modules services need to be setup here
+  setupMods() {
     return {
       validations: Validations,
       responses: {
@@ -39,8 +39,8 @@ class Config {
       date,
       email: EmailServices,
     };
-  }
-}
+  },
+};
 
 export { Config };
 export default { Config };

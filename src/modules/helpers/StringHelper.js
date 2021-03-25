@@ -1,8 +1,8 @@
 import bcrypt from 'bcrypt';
 import crypto from 'crypto';
 
-export default class StringHelper {
-  static generateToken(length, lowCase = true, highCase = true, numbers = true) {
+const StringHelper = {
+  generateToken(length, lowCase = true, highCase = true, numbers = true) {
     let result = '';
     let characters = lowCase ? 'abcdefghijklmnopqrstuvwxyz' : '';
     characters = highCase ? `${characters}ABCDEFGHIJKLMNOPQRSTUVWXYZ` : characters;
@@ -12,18 +12,20 @@ export default class StringHelper {
       result += characters.charAt(Math.floor(Math.random() * charactersLength));
     }
     return result;
-  }
+  },
 
-  static async generateBcrypt(stringToEncrypt) {
+  async generateBcrypt(stringToEncrypt) {
     return bcrypt.hash(stringToEncrypt, 13);
-  }
+  },
 
-  static async compareBcrypt(plainText, hash) {
+  async compareBcrypt(plainText, hash) {
     return bcrypt.compare(plainText, hash);
-  }
+  },
 
-  static createHash = elements => {
+  createHash: elements => {
     const stringToHash = Array.isArray(elements) ? elements.join('') : `${elements}`;
     return crypto.createHash('sha1').update(stringToHash).digest('base64');
-  };
-}
+  },
+};
+
+export default StringHelper;

@@ -1,14 +1,14 @@
 import { UserRoles, UserStatuses } from '../enums/UserEnums';
 
-export default class OnBoardingServices {
-  static async makeUniqueClientNumber(ctx) {
+const OnBoardingServices = {
+  async makeUniqueClientNumber(ctx) {
     const tempCN = ctx.modS.string.generateToken(6, false);
     const user = await ctx.libS.users.getByClientNumber(tempCN);
     if (!user) return tempCN;
     return this.makeUniqueClientNumber(ctx);
-  }
+  },
 
-  static async prepareUser({
+  async prepareUser({
     email, password, language, profile, ctx,
   }) {
     return {
@@ -39,5 +39,7 @@ export default class OnBoardingServices {
       updatedAt: ctx.modS.date.getNow(),
       createdAt: ctx.modS.date.getNow(),
     };
-  }
-}
+  },
+};
+
+export default OnBoardingServices;

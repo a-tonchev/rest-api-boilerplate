@@ -1,25 +1,25 @@
 import UserSchema from '../schema/UserSchema';
 import AuthenticationSchema from '../../authentications/schema/AuthenticationSchema';
 
-export default class UserController {
-  static async getAll(ctx) {
+const UserController = {
+  async getAll(ctx) {
     const users = await ctx.libS.users.getAll();
     return ctx.modS.responses.createSuccessResponse(ctx, {
       users,
     });
-  }
+  },
 
-  static async getById(ctx) {
+  async getById(ctx) {
     const user = await ctx.libS.users.getById(ctx.params.id);
     return ctx.modS.responses.createSuccessResponse(ctx, user);
-  }
+  },
 
-  static async getOwnData(ctx) {
+  async getOwnData(ctx) {
     const user = await ctx.libS.users.getById(ctx.state.user._id);
     return ctx.modS.responses.createSuccessResponse(ctx, user);
-  }
+  },
 
-  static async getByClientNumber(ctx) {
+  async getByClientNumber(ctx) {
     const { clientNumber } = ctx.request.body;
     const user = await ctx.libS.users.getByClientNumber(
       clientNumber,
@@ -32,18 +32,18 @@ export default class UserController {
     return ctx.modS.responses.createSuccessResponse(ctx, {
       user,
     });
-  }
+  },
 
-  static async getOwnProfile(ctx) {
+  async getOwnProfile(ctx) {
     const user = await ctx.libS.users.getById(ctx.state.user._id);
     return ctx.modS.responses.createSuccessResponse(ctx, {
       profile: user.profile,
       email: user.email.address,
       clientNumber: user.clientNumber,
     });
-  }
+  },
 
-  static async sendVerification(ctx) {
+  async sendVerification(ctx) {
     const { email } = ctx.request.body;
     const {
       createErrorResponse,
@@ -63,9 +63,9 @@ export default class UserController {
     const mailSettings = ctx.modS.email.getMailSettings(ctx);
     ctx.modS.email.sendVerificationMail(mailSettings, email, verificationToken).then();
     return createSuccessResponse(ctx);
-  }
+  },
 
-  static async signUp(ctx) {
+  async signUp(ctx) {
     const { email, password } = ctx.request.body;
     const preparedUser = await ctx.libS.users.onBoarding.prepareUser({ email, password, ctx });
     ctx.modS.validations.validateSchema(ctx, preparedUser, UserSchema);
@@ -90,9 +90,9 @@ export default class UserController {
         ctx.modS.responses.CustomErrors.BAD_REQUEST,
       );
     }
-  }
+  },
 
-  static async updateUser(ctx) {
+  async updateUser(ctx) {
     const {
       clientNumber, status, roles, discounts,
     } = ctx.state.userFields;
@@ -114,9 +114,9 @@ export default class UserController {
         err,
       );
     }
-  }
+  },
 
-  static async updateOwnProfile(ctx) {
+  async updateOwnProfile(ctx) {
     const { profile } = ctx.request.body;
     const userId = ctx.state.user._id;
 
@@ -126,9 +126,9 @@ export default class UserController {
     );
 
     return ctx.modS.responses.createSuccessResponse(ctx);
-  }
+  },
 
-  static async resetRequest(ctx) {
+  async resetRequest(ctx) {
     const { user } = ctx.state;
 
     const resetToken = ctx.modS.string.generateToken(32);
@@ -146,9 +146,9 @@ export default class UserController {
       ctx.modS.responses.CustomErrors.EMAIL_CAN_NOT_BE_SEND,
     );
     return ctx.modS.responses.createSuccessResponse(ctx);
-  }
+  },
 
-  static async resetPassword(ctx) {
+  async resetPassword(ctx) {
     const { user, password } = ctx.state;
     try {
       await ctx.libS.users.resetPassword(user.clientNumber, password);
@@ -166,9 +166,9 @@ export default class UserController {
         err,
       );
     }
-  }
+  },
 
-  static async updatePassword(ctx) {
+  async updatePassword(ctx) {
     const { user, password } = ctx.state;
     try {
       await ctx.libS.users.updatePassword(user.clientNumber, password);
@@ -181,9 +181,9 @@ export default class UserController {
         err,
       );
     }
-  }
+  },
 
-  static async login(ctx) {
+  async login(ctx) {
     const { email, password } = ctx.request.body;
     const user = await ctx.libS.users.getByEmailOrClientNumber(email, {});
     const checkPassword = await ctx.libS.users.checkPassword(user, password);
@@ -205,12 +205,14 @@ export default class UserController {
         ctx.modS.responses.CustomErrors.BAD_REQUEST,
       );
     }
-  }
+  },
 
-  static async logout(ctx) {
+  async logout(ctx) {
     if (ctx.state.logoutUser) {
       await ctx.state.logoutUser();
     }
     return ctx.modS.responses.createSuccessResponse(ctx);
-  }
-}
+  },
+};
+
+export default UserController;

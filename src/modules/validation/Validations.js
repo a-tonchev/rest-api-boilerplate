@@ -1,9 +1,9 @@
-import Ajv from 'ajv';
+import Ajv from 'ajv-draft-04';
 import AjvBson from 'ajv-bsontype';
 import AjvErrors from 'ajv-errors';
 import cloneDeep from 'lodash-es/cloneDeep';
 
-const ajv = new Ajv({ allErrors: true, jsonPointers: true });
+const ajv = new Ajv({ allErrors: true, strictTypes: false });
 AjvBson(ajv);
 AjvErrors(ajv);
 
@@ -26,8 +26,18 @@ const Validations = {
   },
 
   validateSchema(ctx, data, schemaToUse, attributesToExclude, returnErrors = false) {
+    if (!schemaToUse) {
+      console.error('Invalid Schema!');
+      return false;
+    }
+
+    if (!data) {
+      console.error('The provided data should be object!');
+      return false;
+    }
+
     const fullSchema = cloneDeep(schemaToUse);
-    const schema = (attributesToExclude)
+    const schema = attributesToExclude
       ? Validations.getSchemaWithoutAttributes(
         fullSchema,
         attributesToExclude,

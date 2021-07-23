@@ -1,41 +1,51 @@
 {
   "name": "koa-rest-mongodb",
   "version": "1.0.0",
-  "main": "index_cjs.cjs",
+  "main": "index.js",
   "Author": "Anton Tonchev",
-  "license": "MIT",
+  "license": "LicenseRef-LICENSE",
   "private": true,
   "type": "module",
+  "imports": {
+    "#lib/*": "./src/lib/*",
+    "#modules/*": "./src/modules/*"
+  },
   "exports": {
     "import": "./index.js",
     "require": "./index_cjs.cjs"
   },
   "dependencies": {
-    "ajv": "^6.12.6",
+    "ajv": "^8.6.2",
     "ajv-bsontype": "^1.0.7",
-    "ajv-errors": "1.0.1",
-    "bcrypt": "^5.0.0",
+    "ajv-draft-04": "^1.0.0",
+    "ajv-errors": "^3.0.0",
+    "bcrypt": "^5.0.1",
     "esm": "^3.2.25",
-    "generic-pool": "^3.7.1",
-    "koa": "^2.11.0",
-    "koa-bodyparser": "^4.2.1",
+    "generic-pool": "^3.8.2",
+    "koa": "^2.13.1",
+    "koa-bodyparser": "^4.3.0",
     "koa-router": "^10.0.0",
     "koa-useragent": "^4.0.0",
-    "lodash-es": "^4.17.20",
+    "lodash-es": "^4.17.21",
     "mongo-dot-notation": "^2.0.0",
-    "mongodb": "^3.4.0",
-    "nodemon": "^2.0.2"
+    "mongodb": "^4.0.1",
+    "nodemon": "^2.0.12"
   },
   "scripts": {
     "start": "node --es-module-specifier-resolution=node index.js",
-    "start-dev": "environment=local ./node_modules/nodemon/bin/nodemon.js --es-module-specifier-resolution=node index.js",
+    "start-dev": "environment=local ./node_modules/nodemon/bin/nodemon.js --es-module-specifier-resolution=node index.js -q",
     "lint": "eslint src/**/*.js startup/**/*.js --fix"
   },
   "devDependencies": {
-    "babel-eslint": "^10.0.3",
-    "eslint": "^7.18.0",
-    "eslint-config-airbnb-base": "^14.0.0",
-    "eslint-plugin-import": "^2.19.1",
-    "eslint-plugin-prettier": "^3.1.1"
+    "@babel/core": "^7.14.8",
+    "@babel/eslint-parser": "^7.14.7",
+    "@babel/plugin-proposal-class-properties": "^7.14.5",
+    "@babel/preset-env": "^7.14.8",
+    "babel-eslint": "^10.1.0",
+    "eslint": "^7.31.0",
+    "eslint-config-airbnb-base": "^14.2.1",
+    "eslint-import-resolver-alias": "^1.1.2",
+    "eslint-plugin-import": "^2.23.4",
+    "eslint-plugin-prettier": "^3.4.0"
   }
 }

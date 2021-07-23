@@ -1,5 +1,6 @@
+import CommonSchemaFields from '#modules/validation/CommonSchemaFields';
+
 import UserSchemaFields from './UserSchemaFields';
-import CommonSchemaFields from '../../../modules/validation/CommonSchemaFields';
 
 const {
   encryptedPassword,

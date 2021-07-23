@@ -1,6 +1,7 @@
+import CommonSchemaFields from '#modules/validation/CommonSchemaFields';
+import UserSchemaFields from '#lib/users/schema/UserSchemaFields';
+
 import AuthenticationSchemaFields from './AuthenticationSchemaFields';
-import UserSchemaFields from '../../users/schema/UserSchemaFields';
-import CommonSchemaFields from '../../../modules/validation/CommonSchemaFields';
 
 const {
   userAgent,

@@ -1,4 +1,4 @@
-import { UserRoles } from '../../lib/users/enums/UserEnums';
+import { UserRoles } from '#lib/users/enums/UserEnums';
 
 const AuthorizationCheck = {
   isAdmin(ctx) {

@@ -1,5 +1,6 @@
 import Router from 'koa-router';
-import UserAuthentications from '../../lib/users/services/UserAuthentications';
+
+import UserAuthentications from '#lib/users/services/UserAuthentications';
 
 const createBasicRoutes = ({ prefix, routeData = [] }) => {
   const prefixParams = prefix ? { prefix } : {};

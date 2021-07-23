@@ -1,7 +1,8 @@
-import createBasicRoutes from '../../../modules/routing/RouteCreator';
+import createBasicRoutes from '#modules/routing/RouteCreator';
+import AuthorizationCheck from '#modules/authorization/AuthorizationCheck';
+
 import UserController from './UserController';
 import UserValidations from '../services/UserValidations';
-import AuthorizationCheck from '../../../modules/authorization/AuthorizationCheck';
 
 const UserRoutes = createBasicRoutes(
   {

@@ -1,5 +1,8 @@
 import mongodb from 'mongodb';
 import genericPool from 'generic-pool';
+
+import LogServices from '#modules/logging/LogServices';
+
 import setupCollections from './setupCollections';
 import setupDatabase from './setupDatabase';
 
@@ -20,9 +23,10 @@ const mongoPool = (connOptions, confOptions = {}) => {
     }).then(async client => {
       if (!databasesEnsured) {
         databasesEnsured = true;
-        console.log('---Ensure database, collections and validations');
+        LogServices.warn('Ensuring databases and collections (indexes, validations)...');
         const mDb = client.db(dbName);
         await setupCollections(mDb);
+        LogServices.success('Ensuring done');
       }
       return client;
     })
@@ -34,7 +38,7 @@ const mongoPool = (connOptions, confOptions = {}) => {
   }, connOptions);
 
   async function release(resource) {
-    if (resource && !resource.isConnected()) {
+    if (resource) {
       await genPool.destroy(resource);
     } else {
       await genPool.release(resource);
@@ -61,6 +65,10 @@ const mongoPool = (connOptions, confOptions = {}) => {
     mongoDb = ctx.mongoDb;
     ctx.db = setupDatabase(ctx.mongoDb);
     db = ctx.db;
+    ctx.privateState = {
+      user: null,
+    };
+
     try {
       await next();
     } finally {

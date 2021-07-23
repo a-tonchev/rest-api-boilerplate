@@ -6,7 +6,11 @@ const setupCollection = async (mongoDb, createCollection) => {
   const collection = mongoDb.collection(AuthenticationEnums.COLLECTION_NAME);
   await collection.createIndex({
     userId: 1,
+  });
+  await collection.createIndex({
     lastActivity: 1,
+  }, {
+    expireAfterSeconds: 15552000,
   });
 };
 

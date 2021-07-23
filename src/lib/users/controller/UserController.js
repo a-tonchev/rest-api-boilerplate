@@ -1,5 +1,4 @@
 import UserSchema from '../schema/UserSchema';
-import AuthenticationSchema from '../../authentications/schema/AuthenticationSchema';
 
 const UserController = {
   async getAll(ctx) {
@@ -15,8 +14,28 @@ const UserController = {
   },
 
   async getOwnData(ctx) {
-    const user = await ctx.libS.users.getById(ctx.state.user._id);
+    const user = await ctx.libS.users.getById(ctx.privateState.user?._id);
     return ctx.modS.responses.createSuccessResponse(ctx, user);
+  },
+
+  async verify(ctx) {
+    const { user } = ctx.state;
+    try {
+      await ctx.libS.users.verifyUser(user);
+      const mailSettings = await ctx.modS.email.getMailSettings(ctx);
+      ctx.modS.email.sendRegistrationSuccess(
+        mailSettings,
+        ctx.libS.users.helpers.getEmail(user),
+      ).then();
+      return ctx.modS.responses.createSuccessResponse(ctx);
+    } catch (err) {
+      return ctx.modS.responses.createErrorResponse(
+        ctx,
+        ctx.modS.responses.CustomErrors.BAD_REQUEST,
+        {},
+        err,
+      );
+    }
   },
 
   async getByClientNumber(ctx) {
@@ -59,7 +78,7 @@ const UserController = {
       createErrorResponse(ctx, CustomErrors.USER_REQUEST_TOO_OFTEN);
     }
     await ctx.libS.users.updateLastVerificationSent(user._id);
-    const verificationToken = ctx.libS.users.getVerificationToken(user);
+    const verificationToken = ctx.libS.users.helpers.getVerificationToken(user);
     const mailSettings = ctx.modS.email.getMailSettings(ctx);
     ctx.modS.email.sendVerificationMail(mailSettings, email, verificationToken).then();
     return createSuccessResponse(ctx);
@@ -67,7 +86,7 @@ const UserController = {
 
   async signUp(ctx) {
     const { email, password } = ctx.request.body;
-    const preparedUser = await ctx.libS.users.onBoarding.prepareUser({ email, password, ctx });
+    const preparedUser = await ctx.libS.users.helpers.onBoarding.prepareUser({ email, password, ctx });
     ctx.modS.validations.validateSchema(ctx, preparedUser, UserSchema);
     try {
       await ctx.libS.users.add(preparedUser);
@@ -136,7 +155,7 @@ const UserController = {
     const mailSettings = ctx.modS.email.getMailSettings(ctx);
     const sendMail = await ctx.modS.email.sendPasswordReset(
       mailSettings,
-      ctx.libS.users.getEmail(user),
+      ctx.libS.users.helpers.getEmail(user),
       resetToken,
     );
 
@@ -155,7 +174,7 @@ const UserController = {
       const mailSettings = ctx.modS.email.getMailSettings(ctx);
       ctx.modS.email.sendPasswordResetSuccess(
         mailSettings,
-        ctx.libS.users.getEmail(user),
+        ctx.libS.users.helpers.getEmail(user),
       ).then();
       return ctx.modS.responses.createSuccessResponse(ctx);
     } catch (err) {
@@ -169,7 +188,9 @@ const UserController = {
   },
 
   async updatePassword(ctx) {
-    const { user, password } = ctx.state;
+    const { password } = ctx.state;
+    const { user } = ctx.privateState;
+
     try {
       await ctx.libS.users.updatePassword(user.clientNumber, password);
       return ctx.modS.responses.createSuccessResponse(ctx);
@@ -184,21 +205,22 @@ const UserController = {
   },
 
   async login(ctx) {
-    const { email, password } = ctx.request.body;
-    const user = await ctx.libS.users.getByEmailOrClientNumber(email, {});
-    const checkPassword = await ctx.libS.users.checkPassword(user, password);
-    ctx.modS.responses.createValidateError(
-      user && checkPassword,
-      ctx,
-      ctx.modS.responses.CustomErrors.USER_WRONG_LOGIN_CREDENTIALS,
-    );
-    const preparedAuthSession = ctx.libS.authentications.prepareAuthenticationSession(
+    const { user } = ctx.state;
+
+    const preparedAuthSession = ctx.libS.authentications.helpers.prepareAuthenticationSession(
       ctx.libS.users.getIdAsString(user), ctx,
     );
-    ctx.modS.validations.validateSchema(ctx, preparedAuthSession, AuthenticationSchema);
+
     try {
       const token = await ctx.libS.authentications.add(preparedAuthSession);
-      return ctx.modS.responses.createSuccessResponse(ctx, { token });
+      const userHash = ctx.modS.string.createHash(user.updatedAt);
+      return ctx.modS.responses.createSuccessResponse(ctx, {
+        token,
+        _id: user._id,
+        roles: user.roles,
+        profile: user.profile,
+        userHash,
+      });
     } catch (err) {
       return ctx.modS.responses.createErrorResponse(
         ctx,

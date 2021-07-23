@@ -1,20 +1,20 @@
 import mongodb from 'mongodb';
-import get from 'lodash-es/get';
 import DotN from 'mongo-dot-notation';
-import StringHelper from '../../../modules/helpers/StringHelper';
+
+import DateHelper from '#modules/helpers/DateHelper';
+import ServicesBase from '#lib/base/services/ServicesBase';
+import UserHelpers from '#lib/users/services/UserHelpers';
+
 import OnBoardingServices from './OnBoardingServices';
-import DateHelper from '../../../modules/helpers/DateHelper';
 import { UserStatuses } from '../enums/UserEnums';
 
 const { ObjectId } = mongodb;
 
-class UserServices {
-  DB = null;
-
-  onBoarding = OnBoardingServices;
-
-  constructor(userDb) {
-    this.DB = userDb;
+class UserServices extends ServicesBase {
+  helpers = {
+    ...super.getHelpers(),
+    ...UserHelpers,
+    onBoarding: OnBoardingServices,
   }
 
   async add(newUser) {
@@ -29,6 +29,17 @@ class UserServices {
   async getActiveById(_id, params = this.publicParams) {
     if (!ObjectId.isValid(_id)) return null;
     return this.DB.findOne({ _id: ObjectId(_id), status: UserStatuses.ACTIVE }, params);
+  }
+
+  async verifyUser({ clientNumber }) {
+    return this.DB.updateOne({
+      clientNumber,
+    }, {
+      $set: {
+        'services.email.verificationTokens': [],
+        'email.verified': true,
+      },
+    });
   }
 
   async getByEmail(email, params = this.publicParams) {
@@ -58,15 +69,6 @@ class UserServices {
 
   async getAll(params = this.publicParams) {
     return this.DB.find({}, params).toArray();
-  }
-
-  getPasswordBcrypt(user) {
-    if (user
-      && user.services
-      && user.services.password
-      && user.services.password.bcrypt
-    ) { return user.services.password.bcrypt; }
-    return null;
   }
 
   async getUserToVerify(verificationToken) {
@@ -132,33 +134,12 @@ class UserServices {
     });
   }
 
-  getEmail(user) {
-    return get(user, 'email.address', '');
-  }
-
-  isVerified(user) {
-    return user && user.email && user.email.verified;
-  }
-
-  getVerificationToken(user) {
-    if (user && user.services.email.verificationTokens[0]) {
-      return user.services.email.verificationTokens[0].token;
-    }
-    return null;
-  }
-
   async updateLastVerificationSent(_id) {
     return this.DB.updateOne({ _id }, {
       $set: {
         'services.email.lastVerificationSent': DateHelper.getNow(),
       },
     });
-  }
-
-  async checkPassword(user, password) {
-    const bcryptHash = this.getPasswordBcrypt(user);
-    if (bcryptHash) return StringHelper.compareBcrypt(password, bcryptHash);
-    return false;
   }
 
   publicParams = {

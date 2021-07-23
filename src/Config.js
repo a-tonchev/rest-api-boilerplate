@@ -1,15 +1,15 @@
-import Users from './lib/users/Users';
-import Authentications from './lib/authentications/Authentications';
-import Validations from './modules/validation/Validations';
+import Validations from '#modules/validation/Validations';
+import Users from '#lib/users/Users';
+import Authentications from '#lib/authentications/Authentications';
 import {
   createErrorResponse,
   createSuccessResponse,
   createValidateError,
-} from './modules/responseHandler/responses';
-import CustomErrors from './modules/responseHandler/CustomErrors';
-import string from './modules/helpers/StringHelper';
-import date from './modules/helpers/DateHelper';
-import EmailServices from './modules/email/EmailServices';
+} from '#modules/responseHandler/responses';
+import CustomErrors from '#modules/responseHandler/CustomErrors';
+import string from '#modules/helpers/StringHelper';
+import date from '#modules/helpers/DateHelper';
+import EmailServices from '#modules/email/EmailServices';
 
 const Config = {
   // All collections need to be stored here

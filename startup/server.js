@@ -1,6 +1,7 @@
 import Koa from 'koa';
 import bodyParser from 'koa-bodyparser';
 import { userAgent } from 'koa-useragent';
+
 import mongoPool from '../src/modules/db/mongoPool';
 import routers from './routes/routes';
 import UserAuthentications from '../src/lib/users/services/UserAuthentications';
@@ -49,7 +50,6 @@ app.use(servicePool.setupLibServices);
 
 app.use(UserAuthentications.setupAuthentication);
 
-
 app.use(bodyParser());
 
 app.use(routers.routes());
@@ -57,5 +57,15 @@ app.use(routers.allowedMethods());
 
 const port = process.env.PORT || 5001;
 app.listen(port, () => {
+  if (process.env.npm_lifecycle_event === 'start-dev') {
+    console.log('Start in DEVELOPMENT mode');
+  } else if (!process.env.environment || process.env.environment === 'local') {
+    console.log('\x1b[1m', '\x1b[33m');
+    console.warn('Please use the command \'yarn start-dev\' if you intend to develop on the project');
+    console.warn('\x1b[0m');
+    console.log('Start in PRODUCTION mode');
+  } else {
+    console.log('Start in PRODUCTION mode');
+  }
   console.log(`Server running on port ${port}`);
 });

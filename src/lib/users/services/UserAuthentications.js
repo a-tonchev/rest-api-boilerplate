@@ -1,6 +1,6 @@
 const UserAuthentications = {
   async isUserAuthenticated(ctx) {
-    const { user } = ctx.state;
+    const { user } = ctx.privateState;
     return !!user;
   },
 
@@ -33,8 +33,8 @@ const UserAuthentications = {
     if (token) {
       user = await ctx.libS.authentications.getActiveUserByToken(ctx, token);
       if (user) {
-        ctx.state.user = user;
-        ctx.state.logoutUser = () => UserAuthentications.logoutUser(ctx, token);
+        ctx.privateState.user = user;
+        ctx.privateState.logoutUser = () => UserAuthentications.logoutUser(ctx, token);
 
         const { body = {} } = ctx.request;
         const { userHash = '' } = body;
@@ -56,7 +56,7 @@ const UserAuthentications = {
     try {
       await next();
     } finally {
-      ctx.state.user = null;
+      ctx.privateState.user = null;
     }
   },
 };

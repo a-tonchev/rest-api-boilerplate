@@ -1,5 +1,6 @@
+import CommonSchemaFields from '#modules/validation/CommonSchemaFields';
+
 import UserSchemaFields from '../schema/UserSchemaFields';
-import CommonSchemaFields from '../../../modules/validation/CommonSchemaFields';
 import { UserStatuses } from '../enums/UserEnums';
 import UserSchema from '../schema/UserSchema';
 
@@ -126,7 +127,7 @@ const UserValidations = {
 
     canUserLogin(ctx, user);
 
-    const checkPassword = await ctx.libS.users.checkPassword(user, password);
+    const checkPassword = await ctx.libS.users.helpers.checkPassword(user, password);
     if (!checkPassword) {
       await ctx.libS.users.updateLoginAttempts(user);
       ctx.modS.responses.createErrorResponse(
@@ -154,7 +155,7 @@ const UserValidations = {
       CustomErrors,
     } = ctx.modS.responses;
     if (!user) return createErrorResponse(ctx, CustomErrors.INVALID_REQUEST);
-    if (!ctx.libS.users.isVerified(user)) createErrorResponse(ctx, CustomErrors.USER_NOT_VERIFIED);
+    if (!ctx.libS.users.helpers.isVerified(user)) createErrorResponse(ctx, CustomErrors.USER_NOT_VERIFIED);
     if (
       user.services?.password?.resetPasswordToken
       && ctx.modS.date.getBefore({ minutes: 1 }) < user.services.password.lastResetRequest
@@ -181,7 +182,7 @@ const UserValidations = {
     } = ctx.modS.responses;
     const user = await ctx.libS.users.getByResetToken(resetToken, {});
     if (!user) return createErrorResponse(ctx, CustomErrors.INVALID_REQUEST);
-    if (!ctx.libS.users.isVerified(user)) createErrorResponse(ctx, CustomErrors.USER_NOT_VERIFIED);
+    if (!ctx.libS.users.helpers.isVerified(user)) createErrorResponse(ctx, CustomErrors.USER_NOT_VERIFIED);
     ctx.state.user = user;
     ctx.state.resetToken = resetToken;
     ctx.state.password = await ctx.modS.string.generateBcrypt(password);
@@ -202,8 +203,8 @@ const UserValidations = {
       createValidateError,
       CustomErrors,
     } = ctx.modS.responses;
-    const { user } = ctx.state;
-    const checkPassword = await ctx.libS.users.checkPassword(user, currentPassword);
+    const { user } = ctx.privateState;
+    const checkPassword = await ctx.libS.users.helpers.checkPassword(user, currentPassword);
     createValidateError(
       checkPassword,
       ctx,

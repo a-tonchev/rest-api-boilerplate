@@ -1,6 +1,7 @@
 import Koa from 'koa';
 import bodyParser from 'koa-bodyparser';
 import { userAgent } from 'koa-useragent';
+import cors from '@koa/cors';
 
 import SystemSettingsServices from '#modules/systemSettings/SystemSettingsServices';
 import mongoPool from '#modules/db/mongoPool';
@@ -12,6 +13,11 @@ import routers from './routes/routes';
 const settingsToUse = SystemSettingsServices.getSettings();
 
 const app = new Koa();
+
+app.use(cors({
+  credentials: true,
+}));
+
 app.use(async (ctx, next) => {
   try {
     await next();

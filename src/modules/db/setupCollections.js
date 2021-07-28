@@ -21,7 +21,7 @@ const createCollection = async (mongoDb, name, schema) => {
   }
 };
 
-const setupCollections = async (mongoDb) => {
+const setupCollections = async mongoDb => {
   const colPromises = Config.collections.map(
     col => (
       col.setupCollection

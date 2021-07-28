@@ -1,10 +1,11 @@
 import Ajv from 'ajv-draft-04';
-import AjvBson from 'ajv-bsontype';
 import AjvErrors from 'ajv-errors';
 import cloneDeep from 'lodash-es/cloneDeep';
 
+import AjvBsonType from '#modules/validation/ajv/AjvBsonType';
+
 const ajv = new Ajv({ allErrors: true, strictTypes: false });
-AjvBson(ajv);
+AjvBsonType(ajv);
 AjvErrors(ajv);
 
 const Validations = {

@@ -970,11 +970,6 @@ agent-base@6:
   dependencies:
     debug "4"
 
-ajv-bsontype@^1.0.7:
-  version "1.0.7"
-  resolved "https://registry.yarnpkg.com/ajv-bsontype/-/ajv-bsontype-1.0.7.tgz#24f13cd50c117491ce8cc2f6251dfa13b2953ca0"
-  integrity sha512-9dnPihZV22Eqwn55V5VstmE641GDcFwG18BrBhsXTNrf52ASON8sAjomWd/KosAh4w+N7mKU8LB10TBp/cMQVQ==
-
 ajv-draft-04@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/ajv-draft-04/-/ajv-draft-04-1.0.0.tgz#3b64761b268ba0b9e668f0b41ba53fce0ad77fc8"

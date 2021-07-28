@@ -29,8 +29,8 @@ const servicePool = {
   },
 };
 
-const getModS = (serviceName) => (serviceName ? modServices[serviceName] : modServices);
-const getLibS = (serviceName) => (serviceName ? libServices[serviceName] : libServices);
+const getModS = serviceName => (serviceName ? modServices[serviceName] : modServices);
+const getLibS = serviceName => (serviceName ? libServices[serviceName] : libServices);
 
 export { getModS, getLibS };
 export default servicePool;

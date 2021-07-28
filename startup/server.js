@@ -2,13 +2,14 @@ import Koa from 'koa';
 import bodyParser from 'koa-bodyparser';
 import { userAgent } from 'koa-useragent';
 
-import mongoPool from '../src/modules/db/mongoPool';
-import routers from './routes/routes';
-import UserAuthentications from '../src/lib/users/services/UserAuthentications';
-import servicePool from '../src/modules/services/servicePool';
-import SettingsServices from '../src/modules/settings/SettingsServices';
+import SystemSettingsServices from '#modules/systemSettings/SystemSettingsServices';
+import mongoPool from '#modules/db/mongoPool';
+import UserAuthentications from '#lib/users/services/UserAuthentications';
+import servicePool from '#modules/services/servicePool';
 
-const settingsToUse = SettingsServices.getSettings();
+import routers from './routes/routes';
+
+const settingsToUse = SystemSettingsServices.getSettings();
 
 const app = new Koa();
 app.use(async (ctx, next) => {

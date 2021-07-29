@@ -41,7 +41,7 @@ const CommonSchemaFields = {
   basicNumber: {
     bsonType: 'number',
   },
-  positiveNumber: {
+  nonNegativeNumber: {
     bsonType: 'number',
     minimum: 0,
   },

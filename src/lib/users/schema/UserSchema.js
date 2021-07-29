@@ -20,7 +20,7 @@ const {
   basicBoolean,
   date,
   requiredString,
-  positiveNumber,
+  nonNegativeNumber,
   emptyString,
 } = CommonSchemaFields;
 
@@ -123,7 +123,7 @@ const UserSchema = {
           bsonType: 'object',
           additionalProperties: false,
           properties: {
-            loginAttempts: positiveNumber,
+            loginAttempts: nonNegativeNumber,
             lastLoginAttempt: date,
           },
         },

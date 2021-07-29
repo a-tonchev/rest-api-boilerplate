@@ -54,7 +54,7 @@ const UserController = {
   },
 
   async getOwnProfile(ctx) {
-    const user = await ctx.libS.users.getById(ctx.state.user._id);
+    const user = await ctx.libS.users.getById(ctx.privateState.user._id);
     return ctx.modS.responses.createSuccessResponse(ctx, {
       profile: user.profile,
       email: user.email.address,
@@ -230,8 +230,8 @@ const UserController = {
   },
 
   async logout(ctx) {
-    if (ctx.state.logoutUser) {
-      await ctx.state.logoutUser();
+    if (ctx.privateState.logoutUser) {
+      await ctx.privateState.logoutUser();
     }
     return ctx.modS.responses.createSuccessResponse(ctx);
   },

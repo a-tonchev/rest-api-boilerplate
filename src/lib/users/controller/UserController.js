@@ -1,5 +1,3 @@
-import UserSchema from '../schema/UserSchema';
-
 const UserController = {
   async getAll(ctx) {
     const users = await ctx.libS.users.getAll();
@@ -85,11 +83,9 @@ const UserController = {
   },
 
   async signUp(ctx) {
-    const { email, password } = ctx.request.body;
-    const preparedUser = await ctx.libS.users.helpers.onBoarding.prepareUser({ email, password, ctx });
-    ctx.modS.validations.validateSchema(ctx, preparedUser, UserSchema);
     try {
-      await ctx.libS.users.add(preparedUser);
+      await ctx.libS.users.add(ctx.state.user);
+
       return ctx.modS.responses.createSuccessResponse(ctx);
     } catch (err) {
       if (err.code === 11000) {

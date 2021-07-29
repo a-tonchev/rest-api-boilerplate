@@ -23,7 +23,7 @@ const UserValidations = {
     const { email, password } = ctx.request.body;
     const { validateSchema } = ctx.modS.validations;
 
-    const valid = validateSchema(ctx, { email, password }, {
+    validateSchema(ctx, { email, password }, {
       bsonType: 'object',
       required: ['email', 'password'],
       properties: {
@@ -38,7 +38,12 @@ const UserValidations = {
       ctx,
       CustomErrors.USER_ALREADY_EXISTS,
     );
-    return valid;
+
+    ctx.state.user = await ctx.libS.users.helpers.onBoarding.prepareUser({ email, password, ctx });
+
+    ctx.modS.validations.validateSchema(ctx, ctx.state.user, UserSchema);
+
+    return true;
   },
 
   async validateGetByClientNumber(ctx) {

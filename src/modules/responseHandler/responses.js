@@ -28,7 +28,7 @@ const createErrorResponse = (ctx, errorEl, data = {}, realError = null) => {
   const statusCode = customError.statusCode ?
     customError.statusCode :
     CustomErrors.BAD_REQUEST.statusCode;
-  ctx.state.realError = realError;
+  ctx.privateState.realError = realError;
 
   return ctx.throw(statusCode, errorMessage, body);
 };

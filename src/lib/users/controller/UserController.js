@@ -133,7 +133,7 @@ const UserController = {
 
   async updateOwnProfile(ctx) {
     const { profile } = ctx.request.body;
-    const userId = ctx.state.user._id;
+    const userId = ctx.privateState.user._id;
 
     await ctx.libS.users.updateProfile(
       userId,

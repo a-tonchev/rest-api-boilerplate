@@ -20,7 +20,7 @@ const UserController = {
     const { user } = ctx.state;
     try {
       await ctx.libS.users.verifyUser(user);
-      const mailSettings = await ctx.modS.email.getMailSettings(ctx);
+      const mailSettings = ctx.modS.email.getMailSettings(ctx);
       ctx.modS.email.sendRegistrationSuccess(
         mailSettings,
         ctx.libS.users.helpers.getEmail(user),

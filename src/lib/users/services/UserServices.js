@@ -42,6 +42,16 @@ class UserServices extends ServicesBase {
     });
   }
 
+  async updatePassword(clientNumber, password) {
+    return this.DB.updateOne({
+      clientNumber,
+    }, {
+      $set: {
+        'services.password.bcrypt': password,
+      },
+    });
+  }
+
   async getByEmail(email, params = this.publicParams) {
     return this.DB.findOne({ 'email.address': email }, params);
   }

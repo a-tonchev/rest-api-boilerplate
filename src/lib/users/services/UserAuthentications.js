@@ -1,3 +1,5 @@
+import CommonSchemaFields from '#modules/validation/CommonSchemaFields';
+
 const UserAuthentications = {
   async isUserAuthenticated(ctx) {
     const { user } = ctx.privateState;
@@ -24,13 +26,24 @@ const UserAuthentications = {
     const headerKey = 'Bearer';
     let token;
     let user;
-    if (header && header.authorization) {
+    if (header?.authorization) {
       const parts = header.authorization.split(' ');
       if (parts.length === 2 && parts[0] === headerKey) {
         token = parts.pop();
       }
     }
     if (token) {
+      ctx.modS.validations.validateSchema(ctx, {
+        token,
+      }, {
+        bsonType: 'object',
+        required: ['token'],
+        additionalProperties: false,
+        properties: {
+          token: CommonSchemaFields._idString,
+        },
+      });
+
       user = await ctx.libS.authentications.getActiveUserByToken(ctx, token);
       if (user) {
         ctx.privateState.user = user;

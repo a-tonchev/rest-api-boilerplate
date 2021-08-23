@@ -1,4 +1,3 @@
-import mongodb from 'mongodb';
 import DotN from 'mongo-dot-notation';
 
 import DateHelper from '#modules/helpers/DateHelper';
@@ -7,8 +6,6 @@ import UserHelpers from '#lib/users/services/UserHelpers';
 
 import OnBoardingServices from './OnBoardingServices';
 import { UserStatuses } from '../enums/UserEnums';
-
-const { ObjectId } = mongodb;
 
 class UserServices extends ServicesBase {
   helpers = {
@@ -21,14 +18,10 @@ class UserServices extends ServicesBase {
     return this.DB.insertOne(newUser);
   }
 
-  async getById(_id, params = this.publicParams) {
-    if (!ObjectId.isValid(_id)) return null;
-    return this.DB.findOne({ _id: ObjectId(_id) }, params);
-  }
-
-  async getActiveById(_id, params = this.publicParams) {
-    if (!ObjectId.isValid(_id)) return null;
-    return this.DB.findOne({ _id: ObjectId(_id), status: UserStatuses.ACTIVE }, params);
+  async getActiveById(id, params = this.publicParams) {
+    const _id = this.helpers.getObjectId(id);
+    if (!_id) return null;
+    return this.DB.findOne({ _id, status: UserStatuses.ACTIVE }, params);
   }
 
   async verifyUser({ clientNumber }) {
@@ -38,6 +31,20 @@ class UserServices extends ServicesBase {
       $set: {
         'services.email.verificationTokens': [],
         'email.verified': true,
+      },
+    });
+  }
+
+  async resetPassword(_id, password) {
+    return this.DB.updateOne({
+      _id,
+    }, {
+      $set: {
+        'services.password.bcrypt': password,
+      },
+      $unset: {
+        'services.password.resetPasswordToken': 1,
+        'services.password.lastResetRequest': 1,
       },
     });
   }

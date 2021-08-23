@@ -33,13 +33,15 @@ app.use(async (ctx, next) => {
 });
 
 app.on('error', (err, ctx) => {
-  // TODO - need to be reported later
-  console.warn('Error message: ', err.message);
-  console.warn('Error code: ', ctx.status);
-  console.warn('Error delivered: ', ctx.body);
-  if (ctx.state.realError) {
-    console.warn('Real Error: ', ctx.state.realError);
+  if (!settingsToUse?.debug && ctx.status !== 500) return;
+  // TODO - need to be reported later, maybe in DB or via api
+  console.warn('Error MESSAGE: ', err.message);
+  console.warn('Error CODE: ', ctx.status);
+  console.warn('Error DELIVERED: ', ctx.body);
+  if (ctx.privateState?.realError) {
+    console.warn('REAL ERROR: ', ctx.privateState.realError);
   }
+  console.warn('Error STACK: ', err.stack);
 });
 
 app.use(servicePool.setupModServices);

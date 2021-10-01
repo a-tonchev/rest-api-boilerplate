@@ -1,4 +1,4 @@
-import createBasicRoutes from '../../src/modules/routing/RouteCreator';
+import createBasicRoutes from '#modules/routing/createRoutes';
 
 const DefaultRoute = createBasicRoutes({
   routeData: [

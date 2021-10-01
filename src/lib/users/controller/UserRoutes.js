@@ -1,4 +1,4 @@
-import createBasicRoutes from '#modules/routing/RouteCreator';
+import createBasicRoutes from '#modules/routing/createRoutes';
 import AuthorizationCheck from '#modules/authorization/AuthorizationCheck';
 
 import UserController from './UserController';

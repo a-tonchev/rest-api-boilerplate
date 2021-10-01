@@ -34,7 +34,8 @@
   "scripts": {
     "start": "node --es-module-specifier-resolution=node index.js",
     "start-dev": "environment=local ./node_modules/nodemon/bin/nodemon.js --es-module-specifier-resolution=node index.js -q",
-    "lint": "eslint src/**/*.js startup/**/*.js --fix"
+    "lint": "eslint src/**/*.js startup/**/*.js --fix",
+    "createLib": "node scripts/libTemplate/createLib.cjs -o"
   },
   "devDependencies": {
     "@babel/core": "^7.14.8",

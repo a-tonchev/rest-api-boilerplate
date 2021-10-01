@@ -2,7 +2,7 @@ import Router from 'koa-router';
 
 import UserAuthentications from '#lib/users/services/UserAuthentications';
 
-const createBasicRoutes = ({ prefix, routeData = [] }) => {
+const createRoutes = ({ prefix, routeData = [] }) => {
   const prefixParams = prefix ? { prefix } : {};
   const router = new Router(prefixParams);
 
@@ -54,4 +54,4 @@ const createBasicRoutes = ({ prefix, routeData = [] }) => {
   return router;
 };
 
-export default createBasicRoutes;
+export default createRoutes;

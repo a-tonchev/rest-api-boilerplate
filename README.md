@@ -22,6 +22,20 @@ export default {
 yarn start
 ```
 
+## Creating new collection service:
+
+```
+yarn createLib [libName]
+```
+
+the new collection service will be created under:
+
+```
+/src/lib/[libName]
+```
+
+with all corresponding files and routes
+
 ## Project information
 
 ### The boilerplate provides following structure:

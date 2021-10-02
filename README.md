@@ -1,6 +1,11 @@
 # KOA Rest API Boilerplate with mongodb driver
 Boilerplate for Rest API based on node js, KOA and mongo driver with JSON Schema validation (which is native for mongo)
 
+## Requirements
+- NodeJS > 12
+- Yarn > 1.22
+
+
 ## Installation
 
 ```

@@ -121,7 +121,8 @@ class ServicesBase {
 
     const flattenDocument = DotN.flatten({
       ...documentRest,
-      updatedAt: DateHelper.getNow(),
+      updatedAt: DotN.$currentDate(),
+      createdAt: DotN.$setOnInsert(DateHelper.getNow()),
     });
 
     return this.DB.updateOne(

@@ -1,3 +1,4 @@
+import UserRoutes from './controller/UserRoutes';
 import UserEnums from './enums/UserEnums';
 import setupCollection from './setupCollection';
 import UserSchema from './schema/UserSchema';
@@ -8,6 +9,7 @@ const Users = {
   setupCollection,
   schema: UserSchema,
   setupServices,
+  routes: UserRoutes,
 };
 
 export default Users;

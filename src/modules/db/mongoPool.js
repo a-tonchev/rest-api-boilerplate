@@ -38,11 +38,7 @@ const mongoPool = (connOptions, confOptions = {}) => {
   }, connOptions);
 
   async function release(resource) {
-    if (resource && !resource.isConnected()) {
-      await genPool.destroy(resource);
-    } else {
-      await genPool.release(resource);
-    }
+    return resource && genPool.release(resource);
   }
 
   process.on('SIGINT', function () {

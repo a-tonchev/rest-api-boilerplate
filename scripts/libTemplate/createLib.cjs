@@ -5,12 +5,14 @@ const { readdir, readFile, outputFile, pathExistsSync } = require('fs-extra');
 const capitalize = str => str.charAt(0).toUpperCase() + str.slice(1);
 
 const DEMO_STRING = 'demo';
+const DEMO_STRING_PL = 'demos';
 const DEMO_STRING_UC = capitalize(DEMO_STRING);
+const DEMO_STRING_PL_UC = capitalize(DEMO_STRING_PL);
 const DEMO_DIRECTORY_NAME = '/demos';
 
 const { hideBin } = require('yargs/helpers')
 const argv = yargs(hideBin(process.argv)).argv;
-const { o: libName } = argv;
+const { o: libName, s: separateSingular } = argv;
 
 if(!libName || typeof libName !== 'string') {
   console.error("\x1b[31m", 'Need to give collection name! "-o [libName]"');
@@ -28,11 +30,14 @@ if(pathExistsSync(PATH_TO_LIB)) {
 
 let singularLibName = libName;
 
-if(singularLibName.endsWith("ses")) {
+if(separateSingular) {
+  singularLibName = separateSingular;
+} else if(singularLibName.endsWith("ses")) {
   singularLibName = singularLibName.slice(0, -2)
 } else if(singularLibName.endsWith("s")) {
   singularLibName = singularLibName.slice(0, -1)
 }
+const capitalizedPlural = capitalize(libName);
 const capitalizedSingular = capitalize(singularLibName);
 
 async function* getFiles(dir) {
@@ -51,16 +56,20 @@ async function* getFiles(dir) {
   for await (const filePath of getFiles(__dirname + DEMO_DIRECTORY_NAME)) {
     let fileData = await readFile(filePath, 'utf8');
 
-    const replaceWithUC = DEMO_STRING_UC;
-    const replaceWithLC = DEMO_STRING;
-    const regexUC = new RegExp(replaceWithUC,"g");
-    const regexLC = new RegExp(replaceWithLC,"g");
+    const regexUC = new RegExp(DEMO_STRING_UC,"g");
+    const regexLC = new RegExp(DEMO_STRING,"g");
+    const regexPL_UC = new RegExp(DEMO_STRING_PL_UC,"g");
+    const regexPL_LC = new RegExp(DEMO_STRING_PL,"g");
 
+    fileData = fileData.replace(regexPL_UC, capitalizedPlural);
+    fileData = fileData.replace(regexPL_LC, libName);
     fileData = fileData.replace(regexUC, capitalizedSingular);
     fileData = fileData.replace(regexLC, singularLibName);
 
     const newFilePath = filePath.split('libTemplate/demos/').pop();
-    let formattedFilePath = newFilePath.replace(regexUC, capitalizedSingular);
+    let formattedFilePath = newFilePath.replace(regexPL_UC, capitalizedPlural);
+    formattedFilePath = formattedFilePath.replace(regexPL_LC, libName);
+    formattedFilePath = formattedFilePath.replace(regexUC, capitalizedSingular);
     formattedFilePath = formattedFilePath.replace(regexLC, singularLibName);
 
     const pathToStore = join(PATH_TO_LIB, formattedFilePath);

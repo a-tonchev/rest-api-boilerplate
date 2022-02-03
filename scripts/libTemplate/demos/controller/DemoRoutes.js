@@ -1,7 +1,7 @@
 import createBasicRoutes from '#modules/routing/createRoutes';
 import AuthorizationCheck from '#modules/authorization/AuthorizationCheck';
 
-import ProductsController from './DemoController';
+import DemoController from './DemoController';
 import DemoValidations from '../services/DemoValidations';
 
 const DemoRoutes = createBasicRoutes(
@@ -13,7 +13,7 @@ const DemoRoutes = createBasicRoutes(
         path: '/all',
         authentication: true,
         authorization: AuthorizationCheck.isAdmin,
-        handler: ProductsController.getAll,
+        handler: DemoController.getAll,
       },
       {
         method: 'post',
@@ -21,7 +21,7 @@ const DemoRoutes = createBasicRoutes(
         authentication: true,
         authorization: AuthorizationCheck.isAdmin,
         validation: DemoValidations.validateGetById,
-        handler: ProductsController.getById,
+        handler: DemoController.getById,
       },
       {
         method: 'post',
@@ -29,7 +29,7 @@ const DemoRoutes = createBasicRoutes(
         authentication: true,
         authorization: AuthorizationCheck.isAdmin,
         validation: DemoValidations.validateCreate,
-        handler: ProductsController.create,
+        handler: DemoController.create,
       },
       {
         method: 'post',
@@ -37,7 +37,7 @@ const DemoRoutes = createBasicRoutes(
         authentication: true,
         authorization: AuthorizationCheck.isAdmin,
         validation: DemoValidations.validateUpdate,
-        handler: ProductsController.update,
+        handler: DemoController.update,
       },
       {
         method: 'post',
@@ -45,7 +45,7 @@ const DemoRoutes = createBasicRoutes(
         authentication: true,
         authorization: AuthorizationCheck.isAdmin,
         validation: DemoValidations.validateRemove,
-        handler: ProductsController.remove,
+        handler: DemoController.remove,
       },
     ],
   },

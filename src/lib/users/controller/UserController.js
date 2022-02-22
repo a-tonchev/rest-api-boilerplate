@@ -204,7 +204,8 @@ const UserController = {
     const { user } = ctx.state;
 
     const preparedAuthSession = ctx.libS.authentications.helpers.prepareAuthenticationSession(
-      ctx.libS.users.getIdAsString(user), ctx,
+      ctx.libS.users.getIdAsString(user),
+      ctx,
     );
 
     try {

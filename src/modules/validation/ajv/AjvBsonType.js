@@ -54,6 +54,7 @@ const AjvBsonType = ajv => {
         case 16: case 'int':
           return (t === 'number') && (a <= 2147483647) && ((`${a}`).indexOf('.') === -1);
         case 18: case 'long':
+          // eslint-disable-next-line no-loss-of-precision
           return (t === 'number') && (a > 2147483647) && (a <= 9223372036854775807) && ((`${a}`).indexOf('.') === -1);
         case 19: case 'decimal':
           return checkBsonType('Decimal128');

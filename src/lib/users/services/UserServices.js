@@ -12,7 +12,7 @@ class UserServices extends ServicesBase {
     ...super.getHelpers(),
     ...UserHelpers,
     onBoarding: OnBoardingServices,
-  }
+  };
 
   async add(newUser) {
     return this.DB.insertOne(newUser);
@@ -168,7 +168,7 @@ class UserServices extends ServicesBase {
       settings: 1,
       roles: 1,
     },
-  }
+  };
 }
 
 export default UserServices;

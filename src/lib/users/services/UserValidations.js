@@ -220,15 +220,13 @@ const UserValidations = {
   },
 
   async validateUpdateProfile(ctx) {
-    const { prepareProperties, validateSchema } = ctx.modS.validations;
-    const profileSchema = UserSchema.properties.profile;
+    const { validateSchema } = ctx.modS.validations;
+
     const {
       profile,
     } = ctx.request.body;
-    const validationSchema = prepareProperties(
-      profileSchema,
-    );
-    return validateSchema(ctx, profile, validationSchema);
+
+    return validateSchema(ctx, profile, UserSchema.properties.profile);
   },
 };
 

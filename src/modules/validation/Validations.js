@@ -1,31 +1,14 @@
 import Ajv from 'ajv-draft-04';
-import AjvErrors from 'ajv-errors';
 import cloneDeep from 'lodash-es/cloneDeep';
 
 import AjvBsonType from '#modules/validation/ajv/AjvBsonType';
 
-const ajv = new Ajv({ allErrors: true, strictTypes: false });
+const ajv = new Ajv({
+  allErrors: true, strictTypes: false, verbose: true,
+});
 AjvBsonType(ajv);
-AjvErrors(ajv);
 
 const Validations = {
-  prepareProperties({ properties, ...schemaFields }) {
-    const preparedFields = { ...schemaFields };
-    const preparedProperties = {};
-    Object.keys(properties).forEach(item => {
-      const preparedObject = properties[item].properties
-        ? Validations.prepareProperties(properties[item])
-        : properties[item];
-
-      preparedProperties[item] = {
-        ...preparedObject,
-        errorMessage: item,
-      };
-    });
-    preparedFields.properties = preparedProperties;
-    return preparedFields;
-  },
-
   validateSchema(ctx, data, schemaToUse, attributesToExclude, returnErrors = false) {
     if (!schemaToUse) {
       console.error('Invalid Schema!');
@@ -44,25 +27,63 @@ const Validations = {
         attributesToExclude,
       )
       : fullSchema;
-    const preparedSchema = Validations.prepareProperties(schema);
-    const validate = ajv.compile(preparedSchema);
+
+    const validate = ajv.compile(schema);
     const valid = validate(data);
+
     if (!ctx) return valid;
+
     if (!valid) {
-      const errors = validate.errors && validate.errors.length ? validate.errors.map(e => {
-        const { params, message } = e;
-        const { missingProperty } = params;
-        if (missingProperty) {
-          return missingProperty;
-        }
-        return message;
-      }) : [];
+      const detailedErrors = [];
+
+      const errorsSet = new Set();
+
+      validate.errors?.forEach(validateError => {
+        const { instancePath, message, params } = validateError;
+
+        let errorPath = '';
+        let error = '';
+
+        if (!instancePath && params.missingProperty) error = params.missingProperty;
+
+        const [, ...instancePathRest] = instancePath.split('/');
+
+        instancePathRest.forEach((ip, index) => {
+          if (!Number.isNaN(Number(ip))) {
+            if (errorPath[errorPath.length - 1] === '.') { errorPath = errorPath.substring(0, errorPath.length - 1); }
+            errorPath += `[${ip}]`;
+          } else {
+            errorPath += ip;
+            if (!error) error = ip;
+          }
+
+          if (index < instancePathRest.length - 1) {
+            errorPath += '.';
+          }
+        });
+
+        const detailedError = {
+          params: {
+            ...(params.bsonType ? {
+              type: params.bsonType,
+            } : params),
+          },
+          message,
+          errorPath,
+        };
+
+        detailedErrors.push(detailedError);
+
+        if (error) errorsSet.add(error);
+      });
+
+      const errors = Array.from(errorsSet);
 
       if (!returnErrors) {
         return ctx.modS.responses.createErrorResponse(
           ctx,
           ctx.modS.responses.CustomErrors.BAD_REQUEST,
-          { errors },
+          { errors, detailedErrors },
           JSON.stringify(validate.errors),
         );
       }

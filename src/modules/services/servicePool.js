@@ -3,10 +3,8 @@ import { Config } from '../../Config';
 const servicePool = {
   async setupModServices(ctx, addOnFinish) {
     ctx.modS = Config.setupMods();
-    console.log('DONE SERVICES');
 
     addOnFinish(() => {
-      console.log('FINISH MODS');
       ctx.modS = null;
     });
   },
@@ -15,7 +13,6 @@ const servicePool = {
     ctx.libS = Config.setupLibs(ctx);
 
     addOnFinish(() => {
-      console.log('FINISH LIBS');
       ctx.libS = null;
     });
   },

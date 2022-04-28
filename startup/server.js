@@ -52,7 +52,7 @@ const readJson = res => new Promise((resolve, reject) => {
           json = JSON.parse(chunk);
           resolve(json);
         } catch (e) {
-          reject(e);
+          resolve({});
         }
       }
     } else if (buffer) {

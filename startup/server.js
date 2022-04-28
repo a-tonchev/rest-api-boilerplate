@@ -95,9 +95,7 @@ routes.forEach(route => {
           privateState: {
             user: null,
           },
-          state: {
-
-          },
+          state: {},
           body: '',
           request: {
             header: {},

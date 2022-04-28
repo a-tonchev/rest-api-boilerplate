@@ -1,13 +1,7 @@
-import Router from 'koa-router';
-
 import SystemSettingsServices from '#modules/systemSettings/SystemSettingsServices';
 
 import DefaultRoute from './DefaultRoute';
 import { Config } from '../../src/Config';
-
-const apiRouter = new Router({
-  prefix: SystemSettingsServices.getRoutePrefix(),
-});
 
 const prefix = SystemSettingsServices.getRoutePrefix();
 
@@ -31,4 +25,4 @@ console.log(apiRouter.stack.map(i => i.path));
 */
 
 export { routes };
-export default apiRouter;
+export default routes;

@@ -48,7 +48,7 @@ const mongoPool = (connOptions, confOptions = {}) => {
     });
   });
 
-  return async (ctx, next) => {
+  return async (ctx, addOnFinish) => {
     ctx.mongo = await genPool.acquire();
 
     ctx.modS.responses.createValidateError(
@@ -65,13 +65,11 @@ const mongoPool = (connOptions, confOptions = {}) => {
       user: null,
     };
 
-    try {
-      await next();
-    } finally {
+    addOnFinish(() => {
       ctx.mongoDb = null;
       ctx.db = null;
-      await release(ctx.mongo);
-    }
+      release(ctx.mongo).then();
+    });
   };
 };
 

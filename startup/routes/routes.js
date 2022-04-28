@@ -9,15 +9,26 @@ const apiRouter = new Router({
   prefix: SystemSettingsServices.getRoutePrefix(),
 });
 
-const libRoutes = Config.collections.filter(col => col.routes).map(c => c.routes);
+const prefix = SystemSettingsServices.getRoutePrefix();
 
-const routes = [DefaultRoute, ...libRoutes];
+const prepareWithPrefix = routesArray => routesArray.map(
+  r => ({ ...r, path: `${prefix}${r.path}` }),
+);
 
+const routes = [...prepareWithPrefix(DefaultRoute)];
+
+Config.collections.forEach(c => {
+  if (c.routes?.length) routes.push(...prepareWithPrefix(c.routes));
+});
+
+/*
 routes.forEach(router => {
   apiRouter.use(router.routes(), router.allowedMethods());
 });
 
-// console.log('Available routes:');
-// console.log(apiRouter.stack.map(i => i.path));
+console.log('Available routes:');
+console.log(apiRouter.stack.map(i => i.path));
+*/
 
+export { routes };
 export default apiRouter;

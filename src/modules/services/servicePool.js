@@ -1,36 +1,24 @@
 import { Config } from '../../Config';
 
-let modServices;
-let libServices;
-
 const servicePool = {
-  async setupModServices(ctx, next) {
+  async setupModServices(ctx, addOnFinish) {
     ctx.modS = Config.setupMods();
-    modServices = ctx.modS;
+    console.log('DONE SERVICES');
 
-    try {
-      await next();
-    } finally {
-      modServices = null;
+    addOnFinish(() => {
+      console.log('FINISH MODS');
       ctx.modS = null;
-    }
+    });
   },
 
-  async setupLibServices(ctx, next) {
+  async setupLibServices(ctx, addOnFinish) {
     ctx.libS = Config.setupLibs(ctx);
 
-    libServices = ctx.libS;
-    try {
-      await next();
-    } finally {
-      libServices = null;
+    addOnFinish(() => {
+      console.log('FINISH LIBS');
       ctx.libS = null;
-    }
+    });
   },
 };
 
-const getModS = serviceName => (serviceName ? modServices[serviceName] : modServices);
-const getLibS = serviceName => (serviceName ? libServices[serviceName] : libServices);
-
-export { getModS, getLibS };
 export default servicePool;

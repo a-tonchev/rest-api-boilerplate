@@ -21,7 +21,7 @@ const UserAuthentications = {
     }
   },
 
-  async setupAuthentication(ctx, next) {
+  async setupAuthentication(ctx, addOnFinish) {
     const { header } = ctx.request;
     const headerKey = 'Bearer';
     let token;
@@ -66,11 +66,10 @@ const UserAuthentications = {
         await UserAuthentications.logoutUser(ctx, token);
       }
     }
-    try {
-      await next();
-    } finally {
+
+    addOnFinish(() => {
       ctx.privateState.user = null;
-    }
+    });
   },
 };
 

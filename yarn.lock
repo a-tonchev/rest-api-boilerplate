@@ -3443,6 +3443,10 @@ typedarray-to-buffer@^3.1.5:
   dependencies:
     is-typedarray "^1.0.0"
 
+uWebSockets.js@uNetworking/uWebSockets.js#v20.8.0:
+  version "20.8.0"
+  resolved "https://codeload.github.com/uNetworking/uWebSockets.js/tar.gz/4f683ec548c8bb289cc4b48ca78c49b8ae66bff1"
+
 unbox-primitive@^1.0.1:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/unbox-primitive/-/unbox-primitive-1.0.2.tgz#29032021057d5e6cdbd08c5129c226dff8ed6f9e"

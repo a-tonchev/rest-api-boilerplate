@@ -30,7 +30,11 @@ const createErrorResponse = (ctx, errorEl, data = {}, realError = null) => {
     CustomErrors.BAD_REQUEST.statusCode;
   ctx.privateState.realError = realError;
 
-  return ctx.throw(statusCode, errorMessage, body);
+  return ctx.throw({
+    statusCode,
+    errorMessage,
+    body,
+  });
 };
 
 const createValidateError = (validation, ctx, errorEl, data = {}) => {

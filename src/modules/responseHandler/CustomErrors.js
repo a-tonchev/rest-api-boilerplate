@@ -31,6 +31,11 @@ const CustomErrors = {
     errorCode: 'DOES_NOT_EXIST',
     message: 'Entity does not exist!',
   },
+  NOT_FOUND: {
+    statusCode: StatusCodes.UNPROCESSABLE,
+    errorCode: 'NOT_FOUND',
+    message: 'Entity not found!',
+  },
   INVALID_REQUEST: {
     statusCode: StatusCodes.UNPROCESSABLE,
     errorCode: 'INVALID_REQUEST',

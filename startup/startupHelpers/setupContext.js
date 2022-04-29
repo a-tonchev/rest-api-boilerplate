@@ -47,19 +47,6 @@ const setupContext = async (req, res) => {
 
   setupUserAgent(ctx);
 
-  /* const utf8decoder = new TextDecoder();
-
-  const ipString = utf8decoder.decode(ipArrayBuffer);
-
-  console.log(utf8decoder.decode(ipArrayBuffer));
-  console.log(String.fromCharCode.apply(null, ipArrayBuffer));
-
-  const validAddress = ipaddr.isValid(ipString);
-  console.log(validAddress) */
-
-  // console.log(addr.toIPv4Address().toString());
-
-  console.log(ctx);
   return ctx;
 };
 

@@ -29,7 +29,7 @@
     "consistent-return": "off",
     "no-return-assign": "off",
     "no-unused-vars": "warn",
-    "no-console": "off",
+    "no-console": ["warn", { "allow": ["warn", "error", "info"] }],
     "func-names": "off",
     "no-process-exit": "off",
     "object-shorthand": "off",

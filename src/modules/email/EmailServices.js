@@ -11,10 +11,10 @@ const EmailServices = {
     },
   ) {
     // Put here your E-Mail logic
-    console.log('Send mail to: ', to, toMany);
-    console.log('subject: ', subject);
-    console.log('paramsToReplace: ', paramsToReplace);
-    console.log('templateName: ', templateName);
+    console.info('Send mail to: ', to, toMany);
+    console.info('subject: ', subject);
+    console.info('paramsToReplace: ', paramsToReplace);
+    console.info('templateName: ', templateName);
   },
 
   async sendVerificationMail(mailSettings, to, verificationToken) {

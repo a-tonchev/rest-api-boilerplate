@@ -31,7 +31,7 @@ const mongoPool = (connOptions, confOptions = {}) => {
       return client;
     })
       .catch(err => {
-        console.log(err);
+        console.error(err);
         return null;
       }),
     destroy: client => client.close(),

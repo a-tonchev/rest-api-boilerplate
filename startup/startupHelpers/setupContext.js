@@ -34,8 +34,11 @@ const setupContext = async (req, res) => {
 
   try {
     const ipArrayBuffer = res.getRemoteAddress();
+
+    /** @type {any} * */
     const binaryArray = new Uint8Array(ipArrayBuffer);
 
+    /** @type { IPv6 | any } */
     const ipAddress = ipaddr.fromByteArray(binaryArray);
 
     ctx.request.ipv6 = ipAddress.toString();

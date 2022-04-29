@@ -15,14 +15,4 @@ Config.collections.forEach(c => {
   if (c.routes?.length) routes.push(...prepareWithPrefix(c.routes));
 });
 
-/*
-routes.forEach(router => {
-  apiRouter.use(router.routes(), router.allowedMethods());
-});
-
-console.log('Available routes:');
-console.log(apiRouter.stack.map(i => i.path));
-*/
-
-export { routes };
 export default routes;

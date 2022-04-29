@@ -66,8 +66,6 @@ const mongoPool = (connOptions, confOptions = {}) => {
     };
 
     addOnFinish(() => {
-      ctx.mongoDb = null;
-      ctx.db = null;
       release(ctx.mongo).then();
     });
   };

@@ -30,6 +30,27 @@ app.any('/', res => {
   res.writeStatus('200').end('Welcome To The API!');
 });
 
+const getParameters = (req, index = 0, paramsArray = []) => {
+  const parameter = req.getParameter(index);
+  if (!parameter) return paramsArray;
+  return getParameters(req, index + 1, [...paramsArray, parameter]);
+};
+
+app.get('/demoGet/:category/somethingElse/:id', (res, req) => {
+  const params = {};
+
+  ['category', 'id'].forEach((param, paramIndex) => {
+    params[param] = req.getParameter(paramIndex);
+  });
+
+  const allParamsAsArray = getParameters(req);
+
+  console.info(allParamsAsArray);
+
+  const { category, id } = params;
+  res.writeStatus('200').end(`Category: ${category}, ID: ${id}!`);
+});
+
 routes.forEach(route => {
   const { path, method, steps } = route;
   app[method](path, (res, req) => {

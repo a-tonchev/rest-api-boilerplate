@@ -4,11 +4,23 @@ import ContextError from './ContextError';
 import jsonParser from './jsonParser';
 import setupUserAgent from './setupUserAgent';
 
+const qsToObject = qs => {
+  try {
+    return Object.fromEntries(new URLSearchParams(qs));
+  } catch (e) {
+    console.error(e);
+    return {};
+  }
+};
+
 const setupContext = async (req, res) => {
+  const queryString = req.getQuery();
+
   const ctx = ({
     privateState: {
       user: null,
     },
+    secure: true,
     state: {},
     body: '',
     request: {
@@ -16,6 +28,8 @@ const setupContext = async (req, res) => {
       body: {},
       ipv6: '',
       ip: '',
+      url: req.getUrl(),
+      query: queryString ? qsToObject(queryString) : {},
     },
     userAgent: {
       _agent: {},

@@ -13,7 +13,24 @@ const qsToObject = qs => {
   }
 };
 
-const setupContext = async (req, res) => {
+const getParameters = (req, res, path) => {
+  const params = {};
+
+  if (req.getMethod() !== 'get' || !path.includes('/:')) return params;
+
+  let paramsIndex = 0;
+
+  for (const name of path.split('/')) {
+    if (name[0] === ':') {
+      params[name.substring(1)] = req.getParameter(paramsIndex);
+      paramsIndex++;
+    }
+  }
+
+  return params;
+};
+
+const setupContext = async (req, res, path) => {
   const queryString = req.getQuery();
 
   const ctx = ({
@@ -23,6 +40,7 @@ const setupContext = async (req, res) => {
     secure: true,
     state: {},
     body: '',
+    params: getParameters(req, res, path),
     request: {
       header: {},
       body: {},
@@ -56,7 +74,11 @@ const setupContext = async (req, res) => {
     const ipAddress = ipaddr.fromByteArray(binaryArray);
 
     ctx.request.ipv6 = ipAddress.toString();
-    ctx.request.ip = ipAddress.toIPv4Address().toString();
+    if (ctx.request.ipv6 === '::1') {
+      ctx.request.ip = '127.0.0.1';
+    } else {
+      ctx.request.ip = ipAddress.toIPv4Address().toString();
+    }
   } catch (e) {
     console.error('Can not get ip address');
     console.error(e);

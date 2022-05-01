@@ -36,6 +36,7 @@ const getParameters = (req, index = 0, paramsArray = []) => {
   return getParameters(req, index + 1, [...paramsArray, parameter]);
 }; */
 
+/*
 const theUrl = '/demoGet/:category/somethingElse/:id';
 
 const getParameters = (req, res, url) => {
@@ -61,6 +62,53 @@ app.get(theUrl, (res, req) => {
   const { category, id } = params;
   res.writeStatus('200').end(`Category: ${category}, ID: ${id}!`);
 });
+*/
+
+const theUrl = '/demoGet/:category/somethingElse/:id';
+
+app.get(theUrl, (res, req) => {
+  res.onAborted(() => {
+    console.error('ABORTED!');
+  });
+
+  (async () => {
+    let ctx = await setupContext(req, res, theUrl);
+
+    const finishArray = [];
+    const addOnFinish = newFunc => finishArray.unshift(newFunc);
+
+    try {
+      await servicePool.setupModServices(ctx);
+      await mongoSetup(ctx, addOnFinish);
+      await servicePool.setupLibServices(ctx);
+      await UserAuthentications.setupAuthentication(ctx);
+
+      ctx.status = '200';
+    } catch (err) {
+      const {
+        statusCode: status,
+        body,
+      } = err?.errorData || {};
+
+      ctx.status = status || 500;
+
+      ctx.body = body || {
+        ok: false,
+        data: {},
+      };
+
+      onError(err, ctx);
+    }
+
+    res.writeStatus(`${ctx.status || 400}`).end(
+      typeof ctx.body === 'object' ? JSON.stringify(ctx.body) : ctx.body,
+    );
+
+    // Clean up functions
+    finishArray.forEach(func => func());
+    ctx = null;
+  })();
+});
 
 routes.forEach(route => {
   const { path, method, steps } = route;
@@ -70,7 +118,7 @@ routes.forEach(route => {
     });
 
     (async () => {
-      let ctx = await setupContext(req, res);
+      let ctx = await setupContext(req, res, path);
 
       const finishArray = [];
       const addOnFinish = newFunc => finishArray.unshift(newFunc);

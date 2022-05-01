@@ -100,6 +100,7 @@ app.get(theUrl, (res, req) => {
       onError(err, ctx);
     }
 
+    ctx.body = 'SUCCESS';
     res.writeStatus(`${ctx.status || 400}`).end(
       typeof ctx.body === 'object' ? JSON.stringify(ctx.body) : ctx.body,
     );

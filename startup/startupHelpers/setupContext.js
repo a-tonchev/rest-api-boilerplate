@@ -30,6 +30,32 @@ const getParameters = (req, res, path) => {
   return params;
 };
 
+const getIpFromBuffer = ipArrayBuffer => {
+  const ips = { ipv6: '', ip: '' };
+
+  if (!ipArrayBuffer.byteLength) return ips;
+
+  try {
+    /** @type {any} * */
+    const binaryArray = new Uint8Array(ipArrayBuffer);
+
+    /** @type { IPv6 | any } */
+    const ipAddress = ipaddr.fromByteArray(binaryArray);
+
+    ips.ipv6 = ipAddress.toString();
+    if (ips.ipv6 === '::1') {
+      ips.ip = '127.0.0.1';
+    } else {
+      ips.ip = ipAddress.toIPv4Address().toString();
+    }
+  } catch (e) {
+    console.error('Can not get ip address');
+    console.error(e);
+  }
+
+  return ips;
+};
+
 const setupContext = async (req, res, path) => {
   const queryString = req.getQuery();
 
@@ -44,7 +70,6 @@ const setupContext = async (req, res, path) => {
     request: {
       header: {},
       body: {},
-      ipv6: '',
       ip: '',
       url: req.getUrl(),
       query: queryString ? qsToObject(queryString) : {},
@@ -64,24 +89,13 @@ const setupContext = async (req, res, path) => {
 
   [ctx.request.body, ctx.request.rawBody] = await jsonParser(res) || [{}, ''];
 
-  try {
+  ctx.request.ip = ctx.request.header['x-forwarded-for'];
+
+  if (!ctx.request.ip) {
     const ipArrayBuffer = res.getRemoteAddress();
+    const { ip: newIp } = getIpFromBuffer(ipArrayBuffer);
 
-    /** @type {any} * */
-    const binaryArray = new Uint8Array(ipArrayBuffer);
-
-    /** @type { IPv6 | any } */
-    const ipAddress = ipaddr.fromByteArray(binaryArray);
-
-    ctx.request.ipv6 = ipAddress.toString();
-    if (ctx.request.ipv6 === '::1') {
-      ctx.request.ip = '127.0.0.1';
-    } else {
-      ctx.request.ip = ipAddress.toIPv4Address().toString();
-    }
-  } catch (e) {
-    console.error('Can not get ip address');
-    console.error(e);
+    ctx.request.ip = newIp;
   }
 
   setupUserAgent(ctx);

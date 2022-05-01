@@ -29,23 +29,34 @@ app.any('/favicon.icon', res => {
 app.any('/', res => {
   res.writeStatus('200').end('Welcome To The API!');
 });
-
+/*
 const getParameters = (req, index = 0, paramsArray = []) => {
   const parameter = req.getParameter(index);
   if (!parameter) return paramsArray;
   return getParameters(req, index + 1, [...paramsArray, parameter]);
-};
+}; */
 
-app.get('/demoGet/:category/somethingElse/:id', (res, req) => {
+const theUrl = '/demoGet/:category/somethingElse/:id';
+
+const getParameters = (req, res, url) => {
   const params = {};
 
-  ['category', 'id'].forEach((param, paramIndex) => {
-    params[param] = req.getParameter(paramIndex);
-  });
+  if (req.getMethod() !== 'get' || !url.includes('/:')) return params;
 
-  const allParamsAsArray = getParameters(req);
+  let paramsIndex = 0;
 
-  console.info(allParamsAsArray);
+  for (const name of url.split('/')) {
+    if (name[0] === ':') {
+      params[name.substring(1)] = req.getParameter(paramsIndex);
+      paramsIndex++;
+    }
+  }
+
+  return params;
+};
+
+app.get(theUrl, (res, req) => {
+  const params = getParameters(req, res, theUrl);
 
   const { category, id } = params;
   res.writeStatus('200').end(`Category: ${category}, ID: ${id}!`);

@@ -69,7 +69,8 @@ app.get(theUrl, (res, req) => {
 const theUrl = '/demoGet/:category/somethingElse/:id';
 
 app.get(theUrl, (res, req) => {
-  setupCors(res, req);
+  const origin = req.getHeader('origin');
+  setupCors(res, origin);
   res.onAborted(() => {
     console.error('ABORTED!');
   });
@@ -118,8 +119,6 @@ app.get(theUrl, (res, req) => {
 routes.forEach(route => {
   const { path, method, steps } = route;
   app[method](path, (res, req) => {
-    setupCors(res, req);
-
     res.onAborted(() => {
       console.error('ABORTED!');
     });
@@ -158,9 +157,13 @@ routes.forEach(route => {
         onError(err, ctx);
       }
 
-      res.writeStatus(`${ctx.status || 400}`).end(
-        typeof ctx.body === 'object' ? JSON.stringify(ctx.body) : ctx.body,
-      );
+      res.cork(() => {
+        res.writeStatus(`${ctx.status || 400}`);
+        setupCors(res, ctx.request.header.origin);
+        res.end(
+          typeof ctx.body === 'object' ? JSON.stringify(ctx.body) : ctx.body,
+        );
+      });
 
       // Clean up functions
       finishArray.forEach(func => func());
@@ -170,7 +173,9 @@ routes.forEach(route => {
 });
 
 app.any('/*', (res, req) => {
-  setupCors(res, req);
+  const origin = req.getHeader('origin');
+  setupCors(res, origin);
+
   res.writeStatus('404').end('Route does not exist!');
 });
 

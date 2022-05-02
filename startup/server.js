@@ -8,6 +8,7 @@ import servicePool from '#modules/services/servicePool';
 import routes from './routes/routes';
 import setupContext from './startupHelpers/setupContext';
 import onError from './startupHelpers/onError';
+import setupCors from './startupHelpers/setupCors';
 
 const settingsToUse = SystemSettingsServices.getSettings();
 
@@ -26,7 +27,8 @@ app.any('/favicon.icon', res => {
   res.writeStatus('200').end('');
 });
 
-app.any('/', res => {
+app.any('/', (res, req) => {
+  setupCors(res, req);
   res.writeStatus('200').end('Welcome To The API!');
 });
 /*
@@ -67,6 +69,7 @@ app.get(theUrl, (res, req) => {
 const theUrl = '/demoGet/:category/somethingElse/:id';
 
 app.get(theUrl, (res, req) => {
+  setupCors(res, req);
   res.onAborted(() => {
     console.error('ABORTED!');
   });
@@ -115,6 +118,8 @@ app.get(theUrl, (res, req) => {
 routes.forEach(route => {
   const { path, method, steps } = route;
   app[method](path, (res, req) => {
+    setupCors(res, req);
+
     res.onAborted(() => {
       console.error('ABORTED!');
     });
@@ -164,7 +169,8 @@ routes.forEach(route => {
   });
 });
 
-app.any('/*', res => {
+app.any('/*', (res, req) => {
+  setupCors(res, req);
   res.writeStatus('404').end('Route does not exist!');
 });
 

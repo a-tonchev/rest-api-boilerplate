@@ -95,6 +95,7 @@ app.get(theUrl, (res, req) => {
       ctx.body = body || {
         ok: false,
         data: {},
+        code: 500,
       };
 
       onError(err, ctx);

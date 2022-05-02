@@ -25,9 +25,11 @@ const createErrorResponse = (ctx, errorEl, data = {}, realError = null) => {
   };
 
   const errorMessage = customError.message ? customError.message : '';
+
   const statusCode = customError.statusCode ?
     customError.statusCode :
     CustomErrors.BAD_REQUEST.statusCode;
+
   ctx.privateState.realError = realError;
 
   return ctx.throw({

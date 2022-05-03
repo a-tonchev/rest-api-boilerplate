@@ -1,11 +1,11 @@
 import { Config } from '../../Config';
 
 const servicePool = {
-  async setupModServices(ctx) {
+  setupModServices(ctx) {
     ctx.modS = Config.setupMods();
   },
 
-  async setupLibServices(ctx) {
+  setupLibServices(ctx) {
     ctx.libS = Config.setupLibs(ctx);
   },
 };

@@ -82,9 +82,9 @@ app.get(theUrl, (res, req) => {
     const addOnFinish = newFunc => finishArray.unshift(newFunc);
 
     try {
-      await servicePool.setupModServices(ctx);
+      servicePool.setupModServices(ctx);
       await mongoSetup(ctx, addOnFinish);
-      await servicePool.setupLibServices(ctx);
+      servicePool.setupLibServices(ctx);
       await UserAuthentications.setupAuthentication(ctx);
 
       ctx.status = '200';

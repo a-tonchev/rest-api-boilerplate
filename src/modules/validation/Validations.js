@@ -28,7 +28,15 @@ const Validations = {
       )
       : fullSchema;
 
-    const validate = ajv.compile(schema);
+    const schemaName = JSON.stringify(schema);
+
+    let validate = ajv.getSchema(schemaName);
+
+    if (!validate) {
+      ajv.addSchema(schema, schemaName);
+      validate = ajv.getSchema(schemaName);
+    }
+
     const valid = validate(data);
 
     if (!ctx) return valid;

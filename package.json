@@ -15,24 +15,23 @@
     "require": "./index_cjs.cjs"
   },
   "dependencies": {
-    "@koa/cors": "^3.1.0",
     "ajv": "^8.6.2",
     "ajv-draft-04": "^1.0.0",
     "bcrypt": "^5.0.1",
     "esm": "^3.2.25",
+    "express-useragent": "^1.0.15",
     "generic-pool": "^3.8.2",
-    "koa": "^2.13.1",
-    "koa-bodyparser": "^4.3.0",
-    "koa-router": "^10.0.0",
-    "koa-useragent": "^4.0.0",
+    "ipaddr.js": "^2.0.1",
     "lodash-es": "^4.17.21",
     "mongo-dot-notation": "^2.0.0",
     "mongodb": "^4.1.3",
-    "nodemon": "^2.0.12"
+    "nodemon": "^2.0.12",
+    "uWebSockets.js": "uNetworking/uWebSockets.js#v20.8.0"
   },
   "scripts": {
     "start": "node --es-module-specifier-resolution=node index.js",
     "start-dev": "environment=local ./node_modules/nodemon/bin/nodemon.js --es-module-specifier-resolution=node index.js -q",
+    "start-dev-inspect": "environment=local ./node_modules/nodemon/bin/nodemon.js --inspect --es-module-specifier-resolution=node index.js -q",
     "lint": "eslint src/**/*.js startup/**/*.js --fix",
     "createLib": "node scripts/libTemplate/createLib.cjs -o"
   },
@@ -41,7 +40,6 @@
     "@babel/eslint-parser": "^7.14.7",
     "@babel/plugin-proposal-class-properties": "^7.14.5",
     "@babel/preset-env": "^7.14.8",
-    "babel-eslint": "^10.1.0",
     "eslint": "^8.9.0",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-import-resolver-alias": "^1.1.2",

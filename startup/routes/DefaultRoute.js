@@ -3,7 +3,7 @@ import createBasicRoutes from '#modules/routing/createRoutes';
 const DefaultRoute = createBasicRoutes({
   routeData: [
     {
-      method: 'all',
+      method: 'any',
       path: '/',
       handler: ctx => ctx.body = 'Hello API!',
     },

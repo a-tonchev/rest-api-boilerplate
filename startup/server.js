@@ -1,80 +1,46 @@
-import Koa from 'koa';
-import bodyParser from 'koa-bodyparser';
-import { userAgent } from 'koa-useragent';
-import cors from '@koa/cors';
+import uWebSockets from 'uWebSockets.js';
 
 import SystemSettingsServices from '#modules/systemSettings/SystemSettingsServices';
 import mongoPool from '#modules/db/mongoPool';
-import UserAuthentications from '#lib/users/services/UserAuthentications';
-import servicePool from '#modules/services/servicePool';
 
-import routers from './routes/routes';
+import setupFaviconRoute from './routes/setup/setupFaviconRoute';
+import setupMainRoute from './routes/setup/setupMainRoute';
+import setupRouteHandlers from './routes/setup/setupRouteHandlers';
+import setupNotFoundRoute from './routes/setup/setupNotFoundRoute';
 
 const settingsToUse = SystemSettingsServices.getSettings();
 
-const app = new Koa();
-
-app.use(cors({
-  credentials: true,
-}));
-
-app.use(async (ctx, next) => {
-  try {
-    await next();
-  } catch (err) {
-    ctx.status = err.status || 500;
-    ctx.body = {
-      ok: err.ok || false,
-      data: err.data,
-      code: err.code,
-    };
-    ctx.app.emit('error', err, ctx);
-  }
-});
-
-app.on('error', (err, ctx) => {
-  if (!settingsToUse?.debug && ctx.status !== 500) return;
-  // TODO - need to be reported later, maybe in DB or via api
-  console.warn('Error MESSAGE: ', err.message);
-  console.warn('Error CODE: ', ctx.status);
-  console.warn('Error DELIVERED: ', ctx.body);
-  if (ctx.privateState?.realError) {
-    console.warn('REAL ERROR: ', ctx.privateState.realError);
-  }
-  console.warn('Error STACK: ', err.stack);
-});
-
-app.use(servicePool.setupModServices);
-
-app.use(userAgent);
-
-app.use(mongoPool({
+const mongoSetup = mongoPool({
   uri: settingsToUse.MONGO_URL,
   dbName: settingsToUse.dbName,
   max: 500,
   min: 1,
-}));
+});
 
-app.use(servicePool.setupLibServices);
+const port = Number(process.env.PORT || 5001);
 
-app.use(UserAuthentications.setupAuthentication);
+const app = uWebSockets.App();
 
-app.use(bodyParser());
+setupFaviconRoute(app);
 
-app.use(routers.routes());
-app.use(routers.allowedMethods());
+setupMainRoute(app);
 
-const port = process.env.PORT || 5001;
-app.listen(port, () => {
-  if (process.env.npm_lifecycle_event === 'start-dev') {
-    console.log('Start in DEVELOPMENT mode');
-  } else if (!process.env.environment || process.env.environment === 'local') {
-    console.log('\x1b[1m', '\x1b[33m');
-    console.warn('Please use the command \'yarn start-dev\' if you intend to develop on the project');
-    console.warn('\x1b[0m');
-    console.log('Start in PRODUCTION mode');
-  } else {
-    console.log('Start in PRODUCTION mode');
+setupRouteHandlers(app, mongoSetup);
+
+setupNotFoundRoute(app);
+
+app.listen(port, listenSocket => {
+  if (listenSocket) {
+    if (process.env.npm_lifecycle_event === 'start-dev') {
+      console.info('Start in DEVELOPMENT mode');
+    } else if (!process.env.environment || process.env.environment === 'local') {
+      console.info('\x1b[1m', '\x1b[33m');
+      console.warn('Please use the command \'yarn start-dev\' if you intend to develop on the project');
+      console.warn('\x1b[0m');
+      console.info('Start in PRODUCTION mode');
+    } else {
+      console.info('Start in PRODUCTION mode');
+    }
+    console.info(`Server running on port ${port}`);
   }
-  console.log(`Server running on port ${port}`);
 });

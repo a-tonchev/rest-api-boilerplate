@@ -1,23 +1,18 @@
-import Router from 'koa-router';
-
 import SystemSettingsServices from '#modules/systemSettings/SystemSettingsServices';
 
 import DefaultRoute from './DefaultRoute';
 import { Config } from '../../src/Config';
 
-const apiRouter = new Router({
-  prefix: SystemSettingsServices.getRoutePrefix(),
+const prefix = SystemSettingsServices.getRoutePrefix();
+
+const prepareWithPrefix = routesArray => routesArray.map(
+  r => ({ ...r, path: `${prefix}${r.path}` }),
+);
+
+const routes = [...prepareWithPrefix(DefaultRoute)];
+
+Config.collections.forEach(c => {
+  if (c.routes?.length) routes.push(...prepareWithPrefix(c.routes));
 });
 
-const libRoutes = Config.collections.filter(col => col.routes).map(c => c.routes);
-
-const routes = [DefaultRoute, ...libRoutes];
-
-routes.forEach(router => {
-  apiRouter.use(router.routes(), router.allowedMethods());
-});
-
-// console.log('Available routes:');
-// console.log(apiRouter.stack.map(i => i.path));
-
-export default apiRouter;
+export default routes;

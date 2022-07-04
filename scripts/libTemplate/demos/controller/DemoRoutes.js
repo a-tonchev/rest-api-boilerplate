@@ -1,8 +1,11 @@
 import createBasicRoutes from '#modules/routing/createRoutes';
 import AuthorizationCheck from '#modules/authorization/AuthorizationCheck';
 
-import DemoController from './DemoController';
-import DemoValidations from '../services/DemoValidations';
+import GetAllDemos from './actions/GetAllDemos';
+import GetDemoById from './actions/GetDemoById';
+import CreateDemo from './actions/CreateDemo';
+import UpdateDemo from './actions/UpdateDemo';
+import RemoveDemo from './actions/RemoveDemo';
 
 const DemoRoutes = createBasicRoutes(
   {
@@ -13,39 +16,39 @@ const DemoRoutes = createBasicRoutes(
         path: '/all',
         authentication: true,
         authorization: AuthorizationCheck.isAdmin,
-        handler: DemoController.getAll,
+        handler: GetAllDemos.handler,
       },
       {
         method: 'post',
         path: '/getById',
         authentication: true,
         authorization: AuthorizationCheck.isAdmin,
-        validation: DemoValidations.validateGetById,
-        handler: DemoController.getById,
+        validation: GetDemoById.validation,
+        handler: GetDemoById.handler,
       },
       {
         method: 'post',
         path: '/create',
         authentication: true,
         authorization: AuthorizationCheck.isAdmin,
-        validation: DemoValidations.validateCreate,
-        handler: DemoController.create,
+        validation: CreateDemo.validation,
+        handler: CreateDemo.handler,
       },
       {
         method: 'post',
         path: '/update',
         authentication: true,
         authorization: AuthorizationCheck.isAdmin,
-        validation: DemoValidations.validateUpdate,
-        handler: DemoController.update,
+        validation: UpdateDemo.validation,
+        handler: UpdateDemo.handler,
       },
       {
         method: 'post',
         path: '/remove',
         authentication: true,
         authorization: AuthorizationCheck.isAdmin,
-        validation: DemoValidations.validateRemove,
-        handler: DemoController.remove,
+        validation: RemoveDemo.validation,
+        handler: RemoveDemo.handler,
       },
     ],
   },

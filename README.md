@@ -89,7 +89,8 @@ Handle and process the request
 
 ```
 import createBasicRoutes from '../../../modules/routing/RouteCreator';
-import UserController from './UserController';
+import GetAllUsers from './actions/GetAllUsers';
+import GetOwnData from './actions/GetOwnData';
 
 const UserRoutes = createBasicRoutes(
   {
@@ -98,15 +99,15 @@ const UserRoutes = createBasicRoutes(
       {
         method: 'all',
         path: '/',
-        handler: UserController.somePublicFunction(),
+        handler: GetAllUsers.handler,
       },
       {
         method: 'get',
         path: '/ownData',
         authentication: true, //if true, user should be logged in.
         authorization: AuthorizeUser(),
-        validation: ValidateUserRequest(),
-        handler: HandleRequestedData(),
+        validation: GetOwnData.validation,
+        handler: GetOwnData.handler,
       },
 ...
     ],

@@ -67,6 +67,8 @@ const setupContext = async (req, res, path) => {
     state: {},
     body: '',
     params: getParameters(req, res, path),
+    waitFor: [],
+    executeAfterFinish: [],
     request: {
       header: {},
       body: {},
@@ -81,6 +83,9 @@ const setupContext = async (req, res, path) => {
       throw new ContextError(errorData);
     },
   });
+
+  ctx.addToWait = newPromise => ctx.waitFor.push(newPromise);
+  ctx.addToExecuteOnFinish = newFunction => ctx.executeAfterFinish.unshift(newFunction);
 
   // Setup Headers
   req.forEach((k, v) => {

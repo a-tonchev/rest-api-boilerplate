@@ -4,12 +4,9 @@ import UserAuthentications from '#lib/users/services/UserAuthentications';
 import onError from '../../startupHelpers/onError';
 
 const setupServicesAndSteps = async (ctx, mongoSetup, steps) => {
-  const finishArray = [];
-  const addOnFinish = newFunc => finishArray.unshift(newFunc);
-
   try {
     servicePool.setupModServices(ctx);
-    await mongoSetup(ctx, addOnFinish);
+    await mongoSetup(ctx);
     servicePool.setupLibServices(ctx);
     await UserAuthentications.setupAuthentication(ctx);
 
@@ -35,8 +32,6 @@ const setupServicesAndSteps = async (ctx, mongoSetup, steps) => {
 
     onError(err, ctx);
   }
-
-  return finishArray;
 };
 
 export default setupServicesAndSteps;

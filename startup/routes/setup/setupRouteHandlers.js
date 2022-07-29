@@ -18,7 +18,7 @@ const setupRouteHandlers = (app, mongoSetup) => {
         (async () => {
           let ctx = await setupContext(req, res, path);
 
-          const finishArray = await setupServicesAndSteps(ctx, mongoSetup, steps);
+          await setupServicesAndSteps(ctx, mongoSetup, steps);
 
           if (!isAborted) {
             res.cork(() => {
@@ -30,8 +30,22 @@ const setupRouteHandlers = (app, mongoSetup) => {
             });
           }
 
+          // Wait for promise if we have to
+          for (const promiseElement of ctx.waitFor) {
+            // eslint-disable-next-line no-await-in-loop
+            await promiseElement;
+          }
+
           // Clean up functions
-          finishArray.forEach(func => func());
+          for (const functionToExecute of ctx.executeAfterFinish) {
+            if (functionToExecute.constructor.name === 'AsyncFunction') {
+              // eslint-disable-next-line no-await-in-loop
+              await functionToExecute();
+            } else {
+              functionToExecute();
+            }
+          }
+
           ctx = null;
         })();
       } catch (e) {

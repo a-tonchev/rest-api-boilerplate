@@ -1,5 +1,4 @@
 import mongodb from 'mongodb';
-import genericPool from 'generic-pool';
 
 import LogServices from '#modules/logging/LogServices';
 
@@ -7,49 +6,40 @@ import setupCollections from './setupCollections';
 import setupDatabase from './setupDatabase';
 
 const { MongoClient } = mongodb;
-let mongoDb;
-let db;
 
 let databasesEnsured = false;
 
-const mongoPool = (connOptions, confOptions = {}) => {
-  const { uri: mongoUrl } = connOptions;
-  const { dbName } = connOptions;
-  const genPool = genericPool.createPool({
-    create: () => MongoClient.connect(mongoUrl, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-      ...confOptions,
-    }).then(async client => {
-      if (!databasesEnsured) {
-        databasesEnsured = true;
-        LogServices.warn('Ensuring databases and collections (indexes, validations)...');
-        const mDb = client.db(dbName);
-        await setupCollections(mDb);
-        LogServices.success('Ensuring done');
-      }
-      return client;
-    })
-      .catch(err => {
-        console.error(err);
-        return null;
-      }),
-    destroy: client => client.close(),
-  }, connOptions);
+const mongoPool = connOptions => {
+  const { uri: mongoUrl, dbName } = connOptions;
 
-  async function release(resource) {
-    return resource && genPool.release(resource);
+  let client;
+
+  try {
+    client = new MongoClient(mongoUrl, {
+      maxPoolSize: 500,
+      minPoolSize: 1,
+    });
+
+    if (!databasesEnsured) {
+      databasesEnsured = true;
+      LogServices.warn('Ensuring databases and collections (indexes, validations)...');
+      const mDb = client.db(dbName);
+      setupCollections(mDb).then(() => {
+        LogServices.success('Ensuring done');
+      });
+    }
+  } catch (e) {
+    console.error(e);
+    return null;
   }
 
   process.on('SIGINT', function () {
-    genPool.drain().then(function () {
-      genPool.clear();
-      process.exit();
-    });
+    client.close();
+    process.exit();
   });
 
   return async ctx => {
-    ctx.mongo = await genPool.acquire();
+    ctx.mongo = client;
 
     ctx.modS.responses.createValidateError(
       ctx.mongo,
@@ -58,21 +48,11 @@ const mongoPool = (connOptions, confOptions = {}) => {
     );
 
     ctx.mongoDb = ctx.mongo.db(dbName);
-    mongoDb = ctx.mongoDb;
     ctx.db = setupDatabase(ctx.mongoDb);
-    db = ctx.db;
     ctx.privateState = {
       user: null,
     };
-
-    ctx.addToExecuteOnFinish(() => {
-      release(ctx.mongo).then();
-    });
   };
 };
 
-const getMongoDb = () => mongoDb;
-const getDb = colName => (colName ? db[colName] : db);
-
-export { getMongoDb, getDb };
 export default mongoPool;

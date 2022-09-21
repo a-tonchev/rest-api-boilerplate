@@ -20,10 +20,9 @@
     "bcrypt": "^5.0.1",
     "esm": "^3.2.25",
     "express-useragent": "^1.0.15",
-    "generic-pool": "^3.8.2",
     "ipaddr.js": "^2.0.1",
     "lodash-es": "^4.17.21",
-    "mongo-dot-notation": "^2.0.0",
+    "mongo-dot-notation": "^3.1.0",
     "mongodb": "^4.1.3",
     "nodemon": "^2.0.12",
     "uWebSockets.js": "uNetworking/uWebSockets.js#v20.8.0"

@@ -13,8 +13,6 @@ const settingsToUse = SystemSettingsServices.getSettings();
 const mongoSetup = mongoPool({
   uri: settingsToUse.MONGO_URL,
   dbName: settingsToUse.dbName,
-  max: 500,
-  min: 1,
 });
 
 const port = Number(process.env.PORT || 5001);

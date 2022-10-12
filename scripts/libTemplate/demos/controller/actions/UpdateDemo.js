@@ -1,6 +1,6 @@
 import DemoSchema from '../../schema/DemoSchema';
 
-const getDemoById = {
+const UpdateDemo = {
   handler: async ctx => {
     const { _id, demo } = ctx.state;
     await ctx.libS.demos.update({ _id, ...demo });
@@ -23,4 +23,4 @@ const getDemoById = {
   },
 };
 
-export default getDemoById;
+export default UpdateDemo;

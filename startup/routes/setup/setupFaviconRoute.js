@@ -11,9 +11,10 @@ const setupFaviconRoute = app => {
 
     try {
       const origin = req.getHeader('origin');
-      setupCors(res, origin);
       if (!isAborted) {
-        res.writeStatus('200').end('');
+        res.writeStatus('200');
+        setupCors(res, origin);
+        res.end('');
       }
     } catch (e) {
       console.error(e);

@@ -11,10 +11,11 @@ const setupMainRoute = app => {
 
     try {
       const origin = req.getHeader('origin');
-      setupCors(res, origin);
 
       if (!isAborted) {
-        res.writeStatus('200').end('Welcome To The API!');
+        res.writeStatus('200');
+        setupCors(res, origin);
+        res.end('Welcome To The API!');
       }
     } catch (e) {
       console.error(e);

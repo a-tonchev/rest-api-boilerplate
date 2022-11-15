@@ -11,11 +11,12 @@ const setupNotFoundRoute = app => {
 
     try {
       const origin = req.getHeader('origin');
+      setupCors(res, origin);
 
       if (!isAborted) {
-        res.writeStatus('404');
-        setupCors(res, origin);
-        res.end('Route does not exist!');
+        res
+          .writeStatus('404')
+          .end('Route does not exist!');
       }
     } catch (e) {
       console.error(e);

@@ -9,7 +9,7 @@ const AjvBsonType = ajv => {
     }
 
     const s = Object.prototype.toString.call(v);
-    const t = s.match(/\[object (.*?)\]/)[1].toLowerCase();
+    const t = s.match(/\[object (.*?)]/)[1].toLowerCase();
 
     if (t === 'number') {
       if (Number.isNaN(v)) {
@@ -24,10 +24,10 @@ const AjvBsonType = ajv => {
     return t;
   };
 
+  const checkBsonType = (b, t, a) => (t === 'object') && (a._bsontype === b);
+
   const $type = function (a) {
     const t = type(a);
-
-    const checkBsonType = b => (t === 'object') && (a._bsontype === b);
 
     return function (b) {
       switch (b) {
@@ -42,7 +42,7 @@ const AjvBsonType = ajv => {
         case 6: case 'undefined':
           return ['null', 'undefined'].includes(t);
         case 7: case 'objectId':
-          return checkBsonType('ObjectID');
+          return checkBsonType('ObjectId', t, a);
         case 8: case 'bool': case 'boolean':
           return t === 'boolean';
         case 9: case 'date':
@@ -57,7 +57,7 @@ const AjvBsonType = ajv => {
           // eslint-disable-next-line no-loss-of-precision
           return (t === 'number') && (a > 2147483647) && (a <= 9223372036854775807) && ((`${a}`).indexOf('.') === -1);
         case 19: case 'decimal':
-          return checkBsonType('Decimal128');
+          return checkBsonType('Decimal128', t, a);
         case 20: case 'number':
           return t === 'number';
         default: return false;

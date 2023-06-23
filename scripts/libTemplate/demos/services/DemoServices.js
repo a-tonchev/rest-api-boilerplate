@@ -6,9 +6,9 @@ class DemoServices extends ServicesBase {
   helpers = {
     ...super.getHelpers(),
     ...DemoHelpers,
-  }
+  };
 
-  publicParams = {}
+  publicParams = {};
 }
 
 export default DemoServices;

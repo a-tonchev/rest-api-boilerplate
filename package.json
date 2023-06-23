@@ -25,7 +25,7 @@
     "mongo-dot-notation": "^3.1.0",
     "mongodb": "^5.3.0",
     "nodemon": "^2.0.12",
-    "uWebSockets.js": "uNetworking/uWebSockets.js#v20.23.0"
+    "uWebSockets.js": "uNetworking/uWebSockets.js#v20.30.0"
   },
   "scripts": {
     "start": "node --es-module-specifier-resolution=node index.js",

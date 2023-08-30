@@ -23,7 +23,7 @@
     "ipaddr.js": "^2.0.1",
     "lodash-es": "^4.17.21",
     "mongo-dot-notation": "^3.1.0",
-    "mongodb": "^5.3.0",
+    "mongodb": "^5.8.0",
     "nodemon": "^2.0.12",
     "uWebSockets.js": "uNetworking/uWebSockets.js#v20.30.0"
   },

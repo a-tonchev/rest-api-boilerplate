@@ -3,13 +3,13 @@ import mongodb from 'mongodb';
 const { ObjectId } = mongodb;
 const DatabaseHelpers = {
   newObjectId() {
-    return ObjectId();
+    return new ObjectId();
   },
 
   getObjectId(hash) {
     if (typeof hash === 'string') {
       if (ObjectId.isValid(hash)) {
-        return ObjectId(hash);
+        return new ObjectId(hash);
       }
       return null;
     }

@@ -22,7 +22,7 @@ class AuthenticationServices extends ServicesBase {
   async checkAndUpdateActivity(token) {
     const updateReport = await this.DB.findOneAndUpdate(
       {
-        _id: ObjectId(token),
+        _id: new ObjectId(token),
         active: true,
         lastActivity: { $gte: DateHelper.getBefore({ days: activeSessionDays }) },
       },
@@ -38,11 +38,12 @@ class AuthenticationServices extends ServicesBase {
         returnNewDocument: true,
       },
     );
-    return updateReport.value?.userId;
+
+    return updateReport?.userId;
   }
 
   async deactivateAuthentication(_id) {
-    return this.DB.updateOne({ _id: ObjectId(_id) }, {
+    return this.DB.updateOne({ _id: new ObjectId(_id) }, {
       $set: {
         active: false,
       },

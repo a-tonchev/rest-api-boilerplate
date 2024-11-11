@@ -29,7 +29,7 @@
     "mongo-dot-notation": "^3.1.0",
     "mongodb": "^6.2.0",
     "nodemon": "^3.0.1",
-    "uWebSockets.js": "uNetworking/uWebSockets.js#v20.43.0"
+    "uWebSockets.js": "uNetworking/uWebSockets.js#v20.49.0"
   },
   "scripts": {
     "start": "node --import ./register.mjs index.js",

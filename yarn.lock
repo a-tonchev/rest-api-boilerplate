@@ -2951,9 +2951,9 @@ typed-array-length@^1.0.6:
     is-typed-array "^1.1.13"
     possible-typed-array-names "^1.0.0"
 
-uWebSockets.js@uNetworking/uWebSockets.js#v20.43.0:
-  version "20.43.0"
-  resolved "https://codeload.github.com/uNetworking/uWebSockets.js/tar.gz/1977b5039938ad863d42fc4958d48c17e5a1fa06"
+uWebSockets.js@uNetworking/uWebSockets.js#v20.49.0:
+  version "20.49.0"
+  resolved "https://codeload.github.com/uNetworking/uWebSockets.js/tar.gz/442087c0a01bf146acb7386910739ec81df06700"
 
 unbox-primitive@^1.0.2:
   version "1.0.2"

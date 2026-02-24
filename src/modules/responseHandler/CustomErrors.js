@@ -41,6 +41,16 @@ const CustomErrors = {
     errorCode: 'INVALID_REQUEST',
     message: 'Invalid request',
   },
+  USER_NOT_FOUND: {
+    statusCode: StatusCodes.UNPROCESSABLE,
+    errorCode: 'USER_NOT_FOUND',
+    message: 'No account found with this email address',
+  },
+  RESET_TOKEN_INVALID: {
+    statusCode: StatusCodes.UNPROCESSABLE,
+    errorCode: 'RESET_TOKEN_INVALID',
+    message: 'The reset link is invalid or has expired',
+  },
   USER_REQUEST_TOO_OFTEN: {
     statusCode: StatusCodes.UNPROCESSABLE,
     errorCode: 'USER_REQUEST_TOO_OFTEN',

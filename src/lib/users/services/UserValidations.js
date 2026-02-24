@@ -147,6 +147,8 @@ const UserValidations = {
 
   async validateResetRequest(ctx) {
     const { email } = ctx.request.body;
+    console.log('[resetRequest] email from body:', email);
+
     const valid = ctx.modS.validations.validateSchema(ctx, { email }, {
       bsonType: 'object',
       required: ['email'],
@@ -154,13 +156,14 @@ const UserValidations = {
         email: UserSchemaFields.email,
       },
     });
+    console.log('[resetRequest] schema valid:', valid);
     const user = await ctx.libS.users.getByEmail(email, {});
+    console.log('[resetRequest] user found:', !!user, user ? user.email : 'N/A');
     const {
       createErrorResponse,
       CustomErrors,
     } = ctx.modS.responses;
-    if (!user) return createErrorResponse(ctx, CustomErrors.INVALID_REQUEST);
-    if (!ctx.libS.users.helpers.isVerified(user)) createErrorResponse(ctx, CustomErrors.USER_NOT_VERIFIED);
+    if (!user) return createErrorResponse(ctx, CustomErrors.USER_NOT_FOUND);
     if (
       user.services?.password?.resetPasswordToken
       && ctx.modS.date.getBefore({ minutes: 1 }) < user.services.password.lastResetRequest
@@ -168,6 +171,7 @@ const UserValidations = {
       createErrorResponse(ctx, CustomErrors.USER_REQUEST_TOO_OFTEN);
     }
     ctx.state.user = user;
+
     return valid;
   },
 
@@ -186,7 +190,7 @@ const UserValidations = {
       CustomErrors,
     } = ctx.modS.responses;
     const user = await ctx.libS.users.getByResetToken(resetToken, {});
-    if (!user) return createErrorResponse(ctx, CustomErrors.INVALID_REQUEST);
+    if (!user) return createErrorResponse(ctx, CustomErrors.RESET_TOKEN_INVALID);
     if (!ctx.libS.users.helpers.isVerified(user)) createErrorResponse(ctx, CustomErrors.USER_NOT_VERIFIED);
     ctx.state.user = user;
     ctx.state.resetToken = resetToken;

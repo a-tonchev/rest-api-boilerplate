@@ -6,29 +6,29 @@ const iv = crypto.randomBytes(16);
 
 const test = '2sdCMER2SaNWv5z';
 
-const encrypt = (text) => {
+const encrypt = text => {
   const cipher = crypto.createCipheriv(algorithm, secretKey, iv);
   const encrypted = Buffer.concat([cipher.update(text), cipher.final()]);
 
   return `${iv.toString('hex')}:${encrypted.toString('hex')}`;
 };
 
-const decrypt = (hashString) => {
+const decrypt = hashString => {
   try {
     const [ivValue, text] = hashString.split(':');
     const decipher = crypto.createDecipheriv(algorithm, secretKey, Buffer.from(ivValue, 'hex'));
     const decrypted = Buffer.concat([decipher.update(Buffer.from(text, 'hex')), decipher.final()]);
 
     return decrypted.toString();
-  } catch (e) {
-    console.log('ERROR on decryption!');
+  } catch {
+    console.error('ERROR on decryption!');
     return '';
   }
 };
 
 const data = encrypt(test);
-console.log('encrypted: ', data);
+console.info('encrypted: ', data);
 
-console.log('#####');
+console.info('#####');
 
-console.log('decrypted: ', decrypt(data));
+console.info('decrypted: ', decrypt(data));

@@ -4,12 +4,13 @@
 async function resolve(specifier, context, defaultResolve) {
   let resolvedSpecifier = specifier;
 
-  const shouldNotResolve = ['mjs', 'cjs', 'js', 'json'].some(ext => specifier.endsWith('.' + ext));
+  const shouldNotResolve = ['mjs', 'cjs', 'js', 'json'].some(ext => specifier.endsWith(`.${ext}`));
   // Handle relative paths and subpath imports
 
   if (
-    (specifier.startsWith('.') || specifier.startsWith('lodash-es/') || specifier.startsWith('#')) && !shouldNotResolve) {
-    resolvedSpecifier = specifier + '.js';
+    (specifier.startsWith('.') || specifier.startsWith('lodash-es/')
+      || specifier.startsWith('#')) && !shouldNotResolve) {
+    resolvedSpecifier = `${specifier}.js`;
 
     // Check if the file exists
     try {
@@ -22,4 +23,5 @@ async function resolve(specifier, context, defaultResolve) {
   return defaultResolve(specifier, context, defaultResolve);
 }
 
+// eslint-disable-next-line import/prefer-default-export
 export { resolve };

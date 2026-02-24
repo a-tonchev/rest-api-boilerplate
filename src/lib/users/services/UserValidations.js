@@ -147,7 +147,7 @@ const UserValidations = {
 
   async validateResetRequest(ctx) {
     const { email } = ctx.request.body;
-    console.log('[resetRequest] email from body:', email);
+    console.info('[resetRequest] email from body:', email);
 
     const valid = ctx.modS.validations.validateSchema(ctx, { email }, {
       bsonType: 'object',
@@ -156,9 +156,9 @@ const UserValidations = {
         email: UserSchemaFields.email,
       },
     });
-    console.log('[resetRequest] schema valid:', valid);
+    console.info('[resetRequest] schema valid:', valid);
     const user = await ctx.libS.users.getByEmail(email, {});
-    console.log('[resetRequest] user found:', !!user, user ? user.email : 'N/A');
+    console.info('[resetRequest] user found:', !!user, user ? user.email : 'N/A');
     const {
       createErrorResponse,
       CustomErrors,

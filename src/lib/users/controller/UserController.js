@@ -218,7 +218,7 @@ const UserController = {
         profile: user.profile,
         userHash,
       });
-    } catch (err) {
+    } catch {
       return ctx.modS.responses.createErrorResponse(
         ctx,
         ctx.modS.responses.CustomErrors.BAD_REQUEST,

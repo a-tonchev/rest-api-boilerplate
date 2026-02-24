@@ -12,14 +12,14 @@ const jsonParser = res => new Promise(resolve => {
           const rawBodyBuffer = Buffer.concat([buffer, chunk]);
           try {
             rawBody = rawBodyBuffer.toString();
-          } catch (e) {
-            console.error(e);
+          } catch {
+            console.error('Failed to convert buffer to string');
             rawBody = '';
           }
 
           jsonBody = JSON.parse(rawBody);
           resolve([jsonBody, rawBody]);
-        } catch (e) {
+        } catch {
           resolve([{}, rawBody]);
         }
       } else {
@@ -27,7 +27,7 @@ const jsonParser = res => new Promise(resolve => {
           rawBody = chunk ? chunk.toString() : '';
           jsonBody = rawBody ? JSON.parse(chunk) : {};
           resolve([jsonBody, rawBody]);
-        } catch (e) {
+        } catch {
           resolve([{}, rawBody]);
         }
       }

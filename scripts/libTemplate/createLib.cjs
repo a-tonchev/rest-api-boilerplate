@@ -1,6 +1,9 @@
 const { resolve, join } = require('path');
+const {
+  readdir, readFile, outputFile, pathExistsSync,
+} = require('fs-extra');
 const yargs = require('yargs/yargs');
-const { readdir, readFile, outputFile, pathExistsSync } = require('fs-extra');
+const { hideBin } = require('yargs/helpers');
 
 const capitalize = str => str.charAt(0).toUpperCase() + str.slice(1);
 
@@ -10,32 +13,31 @@ const DEMO_STRING_UC = capitalize(DEMO_STRING);
 const DEMO_STRING_PL_UC = capitalize(DEMO_STRING_PL);
 const DEMO_DIRECTORY_NAME = '/demos';
 
-const { hideBin } = require('yargs/helpers')
-const argv = yargs(hideBin(process.argv)).argv;
+const { argv } = yargs(hideBin(process.argv));
 const { o: libName, s: separateSingular } = argv;
 
-if(!libName || typeof libName !== 'string') {
-  console.error("\x1b[31m", 'Need to give collection name! "-o [libName]"');
-  console.error("\x1b[0m");
+if (!libName || typeof libName !== 'string') {
+  console.error('\x1b[31m', 'Need to give collection name! "-o [libName]"');
+  console.error('\x1b[0m');
   return;
 }
 
 const PATH_TO_LIB = join(__dirname, '../../src/lib', libName);
 
-if(pathExistsSync(PATH_TO_LIB)) {
-  console.error("\x1b[31m", 'Path Exists already, Please try another!');
-  console.error("\x1b[0m");
+if (pathExistsSync(PATH_TO_LIB)) {
+  console.error('\x1b[31m', 'Path Exists already, Please try another!');
+  console.error('\x1b[0m');
   return;
 }
 
 let singularLibName = libName;
 
-if(separateSingular) {
+if (separateSingular) {
   singularLibName = separateSingular;
-} else if(singularLibName.endsWith("ses")) {
-  singularLibName = singularLibName.slice(0, -2)
-} else if(singularLibName.endsWith("s")) {
-  singularLibName = singularLibName.slice(0, -1)
+} else if (singularLibName.endsWith('ses')) {
+  singularLibName = singularLibName.slice(0, -2);
+} else if (singularLibName.endsWith('s')) {
+  singularLibName = singularLibName.slice(0, -1);
 }
 const capitalizedPlural = capitalize(libName);
 const capitalizedSingular = capitalize(singularLibName);
@@ -53,22 +55,22 @@ async function* getFiles(dir) {
 }
 
 (async () => {
-  for await (const filePath of getFiles(__dirname + DEMO_DIRECTORY_NAME)) {
+  for await (const filePath of getFiles(join(__dirname, DEMO_DIRECTORY_NAME))) {
     let fileData = await readFile(filePath, 'utf8');
 
-    const regexUC = new RegExp(DEMO_STRING_UC,"g");
-    const regexLC = new RegExp(DEMO_STRING,"g");
-    const regexPL_UC = new RegExp(DEMO_STRING_PL_UC,"g");
-    const regexPL_LC = new RegExp(DEMO_STRING_PL,"g");
+    const regexUC = new RegExp(DEMO_STRING_UC, 'g');
+    const regexLC = new RegExp(DEMO_STRING, 'g');
+    const regexPlUc = new RegExp(DEMO_STRING_PL_UC, 'g');
+    const regexPlLc = new RegExp(DEMO_STRING_PL, 'g');
 
-    fileData = fileData.replace(regexPL_UC, capitalizedPlural);
-    fileData = fileData.replace(regexPL_LC, libName);
+    fileData = fileData.replace(regexPlUc, capitalizedPlural);
+    fileData = fileData.replace(regexPlLc, libName);
     fileData = fileData.replace(regexUC, capitalizedSingular);
     fileData = fileData.replace(regexLC, singularLibName);
 
     const newFilePath = filePath.split('libTemplate/demos/').pop();
-    let formattedFilePath = newFilePath.replace(regexPL_UC, capitalizedPlural);
-    formattedFilePath = formattedFilePath.replace(regexPL_LC, libName);
+    let formattedFilePath = newFilePath.replace(regexPlUc, capitalizedPlural);
+    formattedFilePath = formattedFilePath.replace(regexPlLc, libName);
     formattedFilePath = formattedFilePath.replace(regexUC, capitalizedSingular);
     formattedFilePath = formattedFilePath.replace(regexLC, singularLibName);
 
@@ -77,8 +79,8 @@ async function* getFiles(dir) {
     await outputFile(pathToStore, fileData);
   }
 
-  console.log('\x1b[32m');
-  console.log('New lib service was created successfully!');
-  console.log(PATH_TO_LIB);
-  console.log('\x1b[0m');
-})()
+  console.info('\x1b[32m');
+  console.info('New lib service was created successfully!');
+  console.info(PATH_TO_LIB);
+  console.info('\x1b[0m');
+})();

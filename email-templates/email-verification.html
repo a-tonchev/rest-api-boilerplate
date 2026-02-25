@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Email Verification</title>
+	<style>
+		body {
+			font-family: Arial, sans-serif;
+			background-color: #f4f4f4;
+			margin: 0;
+			padding: 20px;
+		}
+		.container {
+			background-color: #ffffff;
+			padding: 30px;
+			max-width: 600px;
+			margin: 0 auto;
+			border-radius: 8px;
+			box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+		}
+		.header {
+			text-align: center;
+			color: #1976d2;
+		}
+		.content {
+			color: #555555;
+			line-height: 1.6;
+		}
+		.button {
+			display: block;
+			width: 100%;
+			max-width: 200px;
+			margin: 25px auto;
+			padding: 12px;
+			text-align: center;
+			background-color: #1976d2;
+			color: white;
+			text-decoration: none;
+			border-radius: 30px;
+			font-size: 16px;
+		}
+		.small-text {
+			font-size: 12px;
+			color: #999999;
+			margin-top: 20px;
+		}
+		.footer {
+			font-size: 12px;
+			color: #999999;
+			text-align: center;
+			margin-top: 30px;
+			border-top: 1px solid #eeeeee;
+			padding-top: 15px;
+		}
+	</style>
+</head>
+<body>
+<div class="container">
+	<div class="header">
+		<h1>Welcome!</h1>
+	</div>
+	<div class="content">
+		<p>Thank you for signing up! To get started, please verify your email address by clicking the button below:</p>
+		<a href="{{verificationLink}}" class="button">Verify Email</a>
+		<p class="small-text">
+			If the button doesn't work, copy and paste this link into your browser:<br>
+			{{verificationLink}}
+		</p>
+	</div>
+	<div class="footer">
+		<p>If you didn't create an account, you can safely ignore this email.</p>
+	</div>
+</div>
+</body>
+</html>

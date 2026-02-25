@@ -1,0 +1,8 @@
+Registration Successful!
+
+Your email has been verified and your registration is now complete.
+We are looking forward to your first login!
+
+Login here: {{loginLink}}
+
+Have a great day!

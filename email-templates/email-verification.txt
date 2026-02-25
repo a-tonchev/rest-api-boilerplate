@@ -1,0 +1,7 @@
+Welcome!
+
+Thank you for signing up! To get started, please verify your email address by clicking the link below:
+
+{{verificationLink}}
+
+If you didn't create an account, you can safely ignore this email.

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Registration Successful</title>
+	<style>
+		body {
+			font-family: Arial, sans-serif;
+			background-color: #f4f4f4;
+			margin: 0;
+			padding: 20px;
+		}
+		.container {
+			background-color: #ffffff;
+			padding: 30px;
+			max-width: 600px;
+			margin: 0 auto;
+			border-radius: 8px;
+			box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+		}
+		.header {
+			text-align: center;
+			color: #1976d2;
+		}
+		.content {
+			color: #555555;
+			line-height: 1.6;
+		}
+		.button {
+			display: block;
+			width: 100%;
+			max-width: 200px;
+			margin: 25px auto;
+			padding: 12px;
+			text-align: center;
+			background-color: #1976d2;
+			color: white;
+			text-decoration: none;
+			border-radius: 30px;
+			font-size: 16px;
+		}
+		.footer {
+			font-size: 12px;
+			color: #999999;
+			text-align: center;
+			margin-top: 30px;
+			border-top: 1px solid #eeeeee;
+			padding-top: 15px;
+		}
+	</style>
+</head>
+<body>
+<div class="container">
+	<div class="header">
+		<h1>Registration Successful!</h1>
+	</div>
+	<div class="content">
+		<p>Your email has been verified and your registration is now complete. We're looking forward to your first login!</p>
+		<a href="{{loginLink}}" class="button">Login</a>
+		<p style="font-size: 12px; color: #999999;">
+			If the button doesn't work, copy and paste this link into your browser:<br>
+			{{loginLink}}
+		</p>
+	</div>
+	<div class="footer">
+		<p>Have a great day!</p>
+	</div>
+</div>
+</body>
+</html>

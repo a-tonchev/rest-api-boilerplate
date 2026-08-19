@@ -4,6 +4,7 @@ export default {
     dbName: 'rest-api-boilerplate',
     apiPrefix: '/api',
     apiVersion: 'v1',
+    maxBodyBytes: 1024 * 1024, // max JSON request body size in bytes (default 1 MB)
     debug: true,
     disableEmail: true,
     frontendUrl: 'http://localhost:3000',
@@ -23,6 +24,7 @@ export default {
     dbName: 'rest-api-boilerplate',
     apiPrefix: '/api',
     apiVersion: 'v1',
+    maxBodyBytes: 1024 * 1024, // max JSON request body size in bytes (default 1 MB)
     frontendUrl: 'https://staging.myapp.com',
     email: {
       from: 'no-reply@myapp.com',
@@ -40,6 +42,7 @@ export default {
     dbName: 'rest-api-boilerplate',
     apiPrefix: '/api',
     apiVersion: 'v1',
+    maxBodyBytes: 1024 * 1024, // max JSON request body size in bytes (default 1 MB)
     frontendUrl: 'https://myapp.com',
     email: {
       from: 'no-reply@myapp.com',

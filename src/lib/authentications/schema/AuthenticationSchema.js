@@ -5,6 +5,7 @@ import AuthenticationSchemaFields from './AuthenticationSchemaFields';
 
 const {
   userAgent,
+  tokenHash,
 } = AuthenticationSchemaFields;
 
 const {
@@ -21,6 +22,7 @@ const AuthenticationSchema = {
   bsonType: 'object',
   required: [
     'userId',
+    'tokenHash',
     'lastActivity',
     'createdAt',
   ],
@@ -29,6 +31,7 @@ const AuthenticationSchema = {
     _id,
     userId,
     userAgent,
+    tokenHash,
     active: basicBoolean,
     lastActivity: date,
     createdAt: date,

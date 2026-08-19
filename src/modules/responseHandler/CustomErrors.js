@@ -6,6 +6,11 @@ const CustomErrors = {
     errorCode: 'BAD_REQUEST',
     message: 'Bad request',
   },
+  PAYLOAD_TOO_LARGE: {
+    statusCode: StatusCodes.PAYLOAD_TOO_LARGE,
+    errorCode: 'PAYLOAD_TOO_LARGE',
+    message: 'Request body is too large',
+  },
   USER_NOT_AUTHORIZED: {
     statusCode: StatusCodes.FORBIDDEN,
     errorCode: 'USER_NOT_AUTHORIZED',

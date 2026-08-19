@@ -1,5 +1,8 @@
 import CommonSchemaFields from '#modules/validation/CommonSchemaFields';
 
+// Built from the schema rather than written out again, so the two cannot drift.
+const SESSION_TOKEN_PATTERN = new RegExp(CommonSchemaFields.sessionToken.pattern);
+
 const UserAuthentications = {
   async isUserAuthenticated(ctx) {
     const { user } = ctx.privateState;
@@ -33,16 +36,17 @@ const UserAuthentications = {
       }
     }
     if (token) {
-      ctx.modS.validations.validateSchema(ctx, {
-        token,
-      }, {
-        bsonType: 'object',
-        required: ['token'],
-        additionalProperties: false,
-        properties: {
-          token: CommonSchemaFields._idString,
-        },
-      });
+      // A token that is not the current shape means no session — it does not
+      // mean a bad request. Sessions minted before they moved to CSPRNG are
+      // 24-character ObjectIds, and validating them threw, so every call
+      // answered 400. The client only signs out on 401, so those users were
+      // wedged in a loop until someone cleared their storage by hand.
+      //
+      // Falling through with no user lets the route layer answer
+      // USER_NOT_AUTHENTICATED, which is both true and something the client
+      // knows how to recover from. It grants nothing a throw would have
+      // refused: the token still never reaches a query.
+      if (!SESSION_TOKEN_PATTERN.test(token)) return;
 
       user = await ctx.libS.authentications.getActiveUserByToken(ctx, token);
       if (user) {
@@ -62,8 +66,6 @@ const UserAuthentications = {
             userHash: newUserHash,
           };
         }
-      } else {
-        await UserAuthentications.logoutUser(ctx, token);
       }
     }
   },

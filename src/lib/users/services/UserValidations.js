@@ -79,8 +79,9 @@ const UserValidations = {
     return ctx.modS.validations.validateSchema(ctx, { email }, {
       bsonType: 'object',
       required: ['email'],
+      additionalProperties: false,
       properties: {
-        clientNumber: UserSchemaFields.email,
+        email: UserSchemaFields.email,
       },
     });
   },
@@ -179,7 +180,7 @@ const UserValidations = {
     const { password, resetToken } = ctx.request.body;
     const valid = ctx.modS.validations.validateSchema(ctx, { password, resetToken }, {
       bsonType: 'object',
-      required: ['password'],
+      required: ['password', 'resetToken'],
       properties: {
         password: UserSchemaFields.password,
         resetToken: CommonSchemaFields.requiredString,

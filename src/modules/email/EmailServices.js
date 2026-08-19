@@ -9,15 +9,43 @@ const {
 } = SystemSettingsServices.getSettings();
 const templatesDir = 'email-templates';
 
+// Templates are a small, fixed set of files; read each once and reuse.
+const templateCache = new Map();
+
 const loadTemplate = async (templateName, isHtml = true) => {
   const ext = isHtml ? '.html' : '.txt';
-  const filePath = path.join(templatesDir, `${templateName}${ext}`);
+  const fileName = `${templateName}${ext}`;
+
+  const cached = templateCache.get(fileName);
+  if (cached !== undefined) return cached;
+
+  const filePath = path.join(templatesDir, fileName);
   try {
-    return await fs.readFile(filePath, 'utf-8');
+    const content = await fs.readFile(filePath, 'utf-8');
+    templateCache.set(fileName, content);
+    return content;
   } catch (err) {
-    console.error(`Error loading template: ${templateName}${ext}`, err);
-    throw new Error(`Template ${templateName}${ext} not found.`);
+    console.error(`Error loading template: ${fileName}`, err);
+    throw new Error(`Template ${fileName} not found.`);
   }
+};
+
+// Reuse one pooled transporter per email-settings object instead of opening a
+// fresh SMTP/TLS connection on every message. Keyed by the settings object's
+// identity so it is created lazily on first send and shared thereafter.
+const transporterCache = new WeakMap();
+
+const getTransporter = emailSettings => {
+  let transporter = transporterCache.get(emailSettings);
+  if (!transporter) {
+    transporter = nodemailer.createTransport({
+      ...emailSettings,
+      pool: true,
+      maxConnections: 3,
+    });
+    transporterCache.set(emailSettings, transporter);
+  }
+  return transporter;
 };
 
 const replaceMustache = (template, params) => {
@@ -57,13 +85,15 @@ const EmailServices = {
       return { success: true };
     }
 
-    const htmlTemplate = await loadTemplate(templateName, true);
-    const textTemplate = await loadTemplate(templateName, false);
+    const [htmlTemplate, textTemplate] = await Promise.all([
+      loadTemplate(templateName, true),
+      loadTemplate(templateName, false),
+    ]);
 
     const htmlContent = replaceMustache(htmlTemplate, paramsToReplace);
     const textContent = replaceMustache(textTemplate, paramsToReplace);
 
-    const transporter = nodemailer.createTransport(emailSettings);
+    const transporter = getTransporter(emailSettings);
 
     try {
       const info = await transporter.sendMail({

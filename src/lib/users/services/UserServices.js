@@ -35,9 +35,15 @@ class UserServices extends ServicesBase {
     });
   }
 
-  async resetPassword(_id, password) {
+  async resetPassword(id, resetToken, password) {
+    const _id = this.helpers.getObjectId(id);
+    if (!_id || typeof resetToken !== 'string' || !resetToken) {
+      return { matchedCount: 0, modifiedCount: 0 };
+    }
     return this.DB.updateOne({
       _id,
+      'services.password.resetPasswordToken': resetToken,
+      'services.password.lastResetRequest': { $gt: DateHelper.getBefore({ days: 2 }) },
     }, {
       $set: {
         'services.password.bcrypt': password,
@@ -111,8 +117,11 @@ class UserServices extends ServicesBase {
   }
 
   async updateByClientNumber(clientNumber, data) {
+    const definedData = Object.fromEntries(
+      Object.entries(data).filter(([, value]) => value !== undefined),
+    );
     const flattenSetProfile = DotN.flatten({
-      ...data,
+      ...definedData,
       updatedAt: DateHelper.getNow(),
     });
     return this.DB.updateOne({

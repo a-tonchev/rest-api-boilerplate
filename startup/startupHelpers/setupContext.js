@@ -56,7 +56,7 @@ const getIpFromBuffer = ipArrayBuffer => {
   return ips;
 };
 
-const setupContext = async (req, res, path) => {
+const setupContext = async (req, res, path, signal) => {
   const queryString = req.getQuery();
 
   const ctx = ({
@@ -92,7 +92,16 @@ const setupContext = async (req, res, path) => {
     ctx.request.header[k] = v;
   });
 
-  [ctx.request.body, ctx.request.rawBody] = await jsonParser(res) || [{}, ''];
+  [ctx.request.body, ctx.request.rawBody] = await jsonParser(res, { signal }) || [{}, ''];
+
+  // If the client aborted after the body completed but before we touch `res`
+  // again, stop here: `res.getRemoteAddress()` on a discarded response throws,
+  // and there is no point running the DB/auth/handler pipeline for a dead socket.
+  if (signal?.aborted) {
+    const abortError = new Error('Request aborted');
+    abortError.isAbort = true;
+    throw abortError;
+  }
 
   ctx.request.ip = ctx.request.header['x-forwarded-for'];
 

@@ -224,7 +224,7 @@ Scaffold a new entity with `yarn createLib [libName]` (see *Creating new collect
 
 ## Authentication
 
-- On login a **session** is created in the `authentications` collection; its `_id` is the **token** used by the frontend.
+- On login a **session** is created in the `authentications` collection. The **token** handed to the frontend is 32 CSPRNG bytes (`crypto.randomBytes`, base64url); only its SHA-256 hash is stored, in `tokenHash`, which carries a sparse unique index. The session `_id` is never used as a credential — a Mongo ObjectId is timestamp + per-process constant + counter, so any client holding two of its own tokens could otherwise predict sessions minted in between.
 - The token is sent in the header as `Bearer {{token}}`; when it is valid the server sets `ctx.privateState.user` (otherwise it stays `null`).
 - Every request updates the session's `lastActivity`. If `lastActivity` is older than **48 hours**, the session is expired and the user must log in again.
 - A Mongo **TTL** index removes sessions whose `lastActivity` is older than **6 months**, keeping the collection clean.

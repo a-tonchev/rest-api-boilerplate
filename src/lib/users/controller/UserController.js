@@ -24,7 +24,7 @@ const UserController = {
       ctx.modS.email.sendRegistrationSuccess(
         mailSettings,
         ctx.libS.users.helpers.getEmail(user),
-      ).then();
+      ).catch(err => console.error('sendRegistrationSuccess failed', err));
       return ctx.modS.responses.createSuccessResponse(ctx);
     } catch (err) {
       return ctx.modS.responses.createErrorResponse(
@@ -52,7 +52,10 @@ const UserController = {
   },
 
   async getOwnProfile(ctx) {
-    const user = await ctx.libS.users.getById(ctx.privateState.user._id);
+    // Reuse the user already loaded by the authentication step instead of
+    // re-querying. Only profile/email/clientNumber are returned, so no
+    // sensitive fields from the full document are exposed.
+    const { user } = ctx.privateState;
     return ctx.modS.responses.createSuccessResponse(ctx, {
       profile: user.profile,
       email: user.email.address,
@@ -68,6 +71,9 @@ const UserController = {
       createSuccessResponse,
     } = ctx.modS.responses;
     const user = await ctx.libS.users.getByEmail(email, {});
+    if (!user) {
+      return createSuccessResponse(ctx);
+    }
     const { lastVerificationSent } = user.services.email;
     if (
       lastVerificationSent
@@ -78,7 +84,8 @@ const UserController = {
     await ctx.libS.users.updateLastVerificationSent(user._id);
     const verificationToken = ctx.libS.users.helpers.getVerificationToken(user);
     const mailSettings = ctx.modS.email.getMailSettings(ctx);
-    ctx.modS.email.sendVerificationMail(mailSettings, email, verificationToken).then();
+    ctx.modS.email.sendVerificationMail(mailSettings, email, verificationToken)
+      .catch(err => console.error('sendVerificationMail failed', err));
     return createSuccessResponse(ctx);
   },
 
@@ -109,7 +116,7 @@ const UserController = {
 
   async updateUser(ctx) {
     const {
-      clientNumber, status, roles, discounts,
+      clientNumber, status, roles,
     } = ctx.state.userFields;
     try {
       await ctx.libS.users.updateByClientNumber(
@@ -117,7 +124,6 @@ const UserController = {
         {
           status,
           roles,
-          discounts,
         },
       );
       return ctx.modS.responses.createSuccessResponse(ctx);
@@ -164,14 +170,20 @@ const UserController = {
   },
 
   async resetPassword(ctx) {
-    const { user, password } = ctx.state;
+    const { user, password, resetToken } = ctx.state;
     try {
-      await ctx.libS.users.resetPassword(user.clientNumber, password);
+      const result = await ctx.libS.users.resetPassword(user._id, resetToken, password);
+      if (!result || result.matchedCount !== 1 || result.modifiedCount !== 1) {
+        return ctx.modS.responses.createErrorResponse(
+          ctx,
+          ctx.modS.responses.CustomErrors.RESET_TOKEN_INVALID,
+        );
+      }
       const mailSettings = ctx.modS.email.getMailSettings(ctx);
       ctx.modS.email.sendPasswordResetSuccess(
         mailSettings,
         ctx.libS.users.helpers.getEmail(user),
-      ).then();
+      ).catch(err => console.error('sendPasswordResetSuccess failed', err));
       return ctx.modS.responses.createSuccessResponse(ctx);
     } catch (err) {
       return ctx.modS.responses.createErrorResponse(

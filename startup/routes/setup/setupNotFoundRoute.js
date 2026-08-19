@@ -5,18 +5,22 @@ const setupNotFoundRoute = app => {
     let isAborted = false;
 
     res.onAborted(() => {
-      console.error('ABORTED!');
       isAborted = true;
     });
 
     try {
+      // Read the origin before any writeHeader; `req` stays valid here (no await).
       const origin = req.getHeader('origin');
-      setupCors(res, origin);
 
       if (!isAborted) {
-        res
-          .writeStatus('404')
-          .end('Route does not exist!');
+        res.cork(() => {
+          // Status FIRST — otherwise the CORS writeHeader calls commit a 200 and
+          // every unknown route silently answers 200 OK.
+          res.writeStatus('404 Not Found');
+          setupCors(res, origin);
+          res.writeHeader('Content-Type', 'application/json; charset=utf-8');
+          res.end('{"ok":false,"code":"NOT_FOUND","data":{}}');
+        });
       }
     } catch (e) {
       console.error(e);

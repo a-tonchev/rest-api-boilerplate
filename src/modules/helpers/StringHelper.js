@@ -9,9 +9,17 @@ const StringHelper = {
     characters = numbers ? `${characters}0123456789` : characters;
     const charactersLength = characters.length;
     for (let i = 0; i < length; i++) {
-      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+      result += characters.charAt(crypto.randomInt(charactersLength));
     }
     return result;
+  },
+
+  safeCompare(a, b) {
+    if (typeof a !== 'string' || typeof b !== 'string') return false;
+    const bufferA = Buffer.from(a);
+    const bufferB = Buffer.from(b);
+    if (bufferA.length !== bufferB.length) return false;
+    return crypto.timingSafeEqual(bufferA, bufferB);
   },
 
   async generateBcrypt(stringToEncrypt) {

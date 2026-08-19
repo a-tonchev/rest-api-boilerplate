@@ -75,7 +75,7 @@ class ServicesBase {
   }
 
   async removeByQuery({ query, multiple = false }) {
-    return multiple ? this.DB.deleteOne(query) : this.DB.deleteMany(query);
+    return multiple ? this.DB.deleteMany(query) : this.DB.deleteOne(query);
   }
 
   async add(document) {

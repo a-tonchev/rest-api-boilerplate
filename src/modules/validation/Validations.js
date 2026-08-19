@@ -8,6 +8,39 @@ const ajv = new Ajv({
 });
 AjvBsonType(ajv);
 
+// Compile each schema once and cache the validator by the schema's object
+// identity instead of cloning + JSON.stringify-ing the whole schema on every
+// request. A WeakMap keyed by the schema object gives eviction for free (the
+// validator dies with the schema), so there is no unbounded registry growth
+// even if a caller builds schemas dynamically. Per schema we keep a small Map of
+// exclude-variants keyed by the sorted list of excluded attributes.
+const validatorCache = new WeakMap();
+
+const getValidator = (schemaToUse, attributesToExclude) => {
+  let byExclude = validatorCache.get(schemaToUse);
+  if (!byExclude) {
+    byExclude = new Map();
+    validatorCache.set(schemaToUse, byExclude);
+  }
+
+  const excludeKey = attributesToExclude && attributesToExclude.length
+    ? [...attributesToExclude].sort().join(',')
+    : '';
+
+  let validate = byExclude.get(excludeKey);
+  if (!validate) {
+    // Clone only when we actually mutate the schema to strip attributes; the
+    // common (no-exclude) path compiles the original object directly.
+    const schema = excludeKey
+      ? Validations.getSchemaWithoutAttributes(cloneDeep(schemaToUse), attributesToExclude)
+      : schemaToUse;
+    validate = ajv.compile(schema);
+    byExclude.set(excludeKey, validate);
+  }
+
+  return validate;
+};
+
 const Validations = {
   validateSchema(ctx, data, schemaToUse, attributesToExclude, returnErrors = false) {
     if (!schemaToUse) {
@@ -20,22 +53,7 @@ const Validations = {
       return false;
     }
 
-    const fullSchema = cloneDeep(schemaToUse);
-    const schema = attributesToExclude
-      ? Validations.getSchemaWithoutAttributes(
-        fullSchema,
-        attributesToExclude,
-      )
-      : fullSchema;
-
-    const schemaName = JSON.stringify(schema);
-
-    let validate = ajv.getSchema(schemaName);
-
-    if (!validate) {
-      ajv.addSchema(schema, schemaName);
-      validate = ajv.getSchema(schemaName);
-    }
+    const validate = getValidator(schemaToUse, attributesToExclude);
 
     const valid = validate(data);
 

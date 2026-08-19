@@ -6,6 +6,10 @@ const CommonSchemaFields = {
     bsonType: 'string',
     pattern: '^[a-fA-F0-9]{24}$',
   },
+  sessionToken: {
+    bsonType: 'string',
+    pattern: '^[A-Za-z0-9_-]{32,128}$',
+  },
   basicObject: {
     bsonType: 'object',
   },
